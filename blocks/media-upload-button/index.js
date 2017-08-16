@@ -135,8 +135,23 @@ class MediaUploadButton extends Component {
 
 		if ( this.props.multiple ) {
 			this.props.value.map( addMedia );
+			// Set the frame state to edit mode.
 		} else {
 			addMedia( this.props.value );
+		}
+
+		if ( this.props.gallery ) {
+			const edit = this.frame.state( 'gallery-edit' );
+
+			edit.set( 'library', new wp.media.model.Selection( selection.models, {
+				props: selection.props.toJSON(),
+				multiple: true,
+			} ) );
+
+			this.frame.setState( 'gallery-edit' );
+
+			// Keep focus inside media modal after jumping to gallery view.
+			this.frame.modal.focusManager.focus();
 		}
 	}
 
