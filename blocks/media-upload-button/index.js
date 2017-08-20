@@ -79,7 +79,6 @@ class MediaUploadButton extends Component {
 		this.openModal = this.openModal.bind( this );
 		this.onSelect = this.onSelect.bind( this );
 		this.onUpdate = this.onUpdate.bind( this );
-		this.onOpen = this.onOpen.bind( this );
 		const frameConfig = {
 			title: __( 'Select or Upload a media' ),
 			button: {
@@ -105,6 +104,7 @@ class MediaUploadButton extends Component {
 					props: attachments.props.toJSON(),
 					multiple: true,
 				} ),
+				editing: ( this.props.value ) ? true : false,
 			} );
 			wp.media.frame = this.frame;
 		} else {
@@ -114,7 +114,6 @@ class MediaUploadButton extends Component {
 		// When an image is selected in the media frame...
 		this.frame.on( 'select', this.onSelect );
 		this.frame.on( 'update', this.onUpdate );
-		this.frame.on( 'open', this.onOpen );
 	}
 
 	componentWillUnmount() {
@@ -141,9 +140,6 @@ class MediaUploadButton extends Component {
 		// Get media attachment details from the frame state
 		const attachment = this.frame.state().get( 'selection' ).toJSON();
 		onSelect( multiple ? attachment : attachment[ 0 ] );
-	}
-
-	onOpen() {
 	}
 
 	openModal() {
