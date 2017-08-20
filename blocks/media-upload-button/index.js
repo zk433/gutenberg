@@ -43,6 +43,7 @@ const getGalleryDetailsMediaFrame = () => {
 					editing: this.options.editing,
 					menu: 'gallery',
 					displaySettings: false,
+					multiple: true,
 				} ),
 
 				new wp.media.controller.GalleryAdd(),
@@ -56,6 +57,20 @@ const getGalleryDetailsMediaFrame = () => {
 const slimImageObject = ( img ) => {
 	const attrSet = [ 'sizes', 'mime', 'type', 'subtype', 'id', 'url', 'alt', 'link' ];
 	return pick( img, attrSet );
+};
+
+const getAttachmentsCollection = ( ids ) => {
+	const attachments = wp.media.query( {
+		order: 'ASC',
+		orderby: 'post__in',
+		perPage: -1,
+		post__in: ids,
+		query: true,
+		type: 'image',
+	} );
+
+	attachments.more();
+	return attachments;
 };
 
 class MediaUploadButton extends Component {
@@ -78,11 +93,18 @@ class MediaUploadButton extends Component {
 		}
 
 		if ( gallery ) {
+			const ids = this.props.value || [];
+			const attachments = getAttachmentsCollection( ids );
+			const currentState = ( this.props.value ) ? 'gallery-edit' : 'gallery';
 			const GalleryDetailsMediaFrame = getGalleryDetailsMediaFrame();
 			this.frame = new GalleryDetailsMediaFrame( {
-				frame: 'select',
 				mimeType: type,
-				state: 'gallery',
+				state: currentState,
+				multiple,
+				selection: new wp.media.model.Selection( attachments.models, {
+					props: attachments.props.toJSON(),
+					multiple: true,
+				} ),
 			} );
 			wp.media.frame = this.frame;
 		} else {
@@ -122,37 +144,6 @@ class MediaUploadButton extends Component {
 	}
 
 	onOpen() {
-		const selection = this.frame.state().get( 'selection' );
-		const addMedia = ( id ) => {
-			const attachment = wp.media.attachment( id );
-			attachment.fetch();
-			selection.add( attachment );
-		};
-
-		if ( ! this.props.value ) {
-			return;
-		}
-
-		if ( this.props.multiple ) {
-			this.props.value.map( addMedia );
-			// Set the frame state to edit mode.
-		} else {
-			addMedia( this.props.value );
-		}
-
-		if ( this.props.gallery ) {
-			const edit = this.frame.state( 'gallery-edit' );
-
-			edit.set( 'library', new wp.media.model.Selection( selection.models, {
-				props: selection.props.toJSON(),
-				multiple: true,
-			} ) );
-
-			this.frame.setState( 'gallery-edit' );
-
-			// Keep focus inside media modal after jumping to gallery view.
-			this.frame.modal.focusManager.focus();
-		}
 	}
 
 	openModal() {
