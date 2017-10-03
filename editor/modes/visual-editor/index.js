@@ -21,7 +21,14 @@ import PostTitle from '../../post-title';
 import WritingFlow from '../../writing-flow';
 import TableOfContents from '../../table-of-contents';
 import { getBlockUids, getMultiSelectedBlockUids } from '../../selectors';
-import { clearSelectedBlock, multiSelect, redo, undo, removeBlocks } from '../../actions';
+import {
+	clearSelectedBlock,
+	multiSelect,
+	redo,
+	undo,
+	autosave,
+	removeBlocks,
+} from '../../actions';
 
 class VisualEditor extends Component {
 	constructor() {
@@ -31,6 +38,7 @@ class VisualEditor extends Component {
 		this.onClick = this.onClick.bind( this );
 		this.selectAll = this.selectAll.bind( this );
 		this.undoOrRedo = this.undoOrRedo.bind( this );
+		this.save = this.save.bind( this );
 		this.deleteSelectedBlocks = this.deleteSelectedBlocks.bind( this );
 	}
 
@@ -73,6 +81,11 @@ class VisualEditor extends Component {
 		event.preventDefault();
 	}
 
+	save( event ) {
+		event.preventDefault();
+		this.props.onSave();
+	}
+
 	deleteSelectedBlocks( event ) {
 		const { multiSelectedBlockUids, onRemove } = this.props;
 		if ( multiSelectedBlockUids.length ) {
@@ -98,6 +111,7 @@ class VisualEditor extends Component {
 					'mod+a': this.selectAll,
 					'mod+z': this.undoOrRedo,
 					'mod+shift+z': this.undoOrRedo,
+					'mod+s': [ this.save, true ],
 					backspace: this.deleteSelectedBlocks,
 					del: this.deleteSelectedBlocks,
 				} } />
@@ -126,5 +140,6 @@ export default connect(
 		onRedo: redo,
 		onUndo: undo,
 		onRemove: removeBlocks,
+		onSave: autosave,
 	}
 )( VisualEditor );
