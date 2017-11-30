@@ -261,6 +261,10 @@ registerBlockType( 'core/paragraph', {
 		}
 	},
 
+	isEmpty( attributes ) {
+		return ! attributes.content.length;
+	},
+
 	edit: ParagraphBlock,
 
 	save( { attributes } ) {

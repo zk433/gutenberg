@@ -35,6 +35,7 @@ import {
 	requestMetaBoxUpdates,
 	updateReusableBlock,
 	saveReusableBlock,
+	removeBlock,
 } from './actions';
 import {
 	getCurrentPost,
@@ -212,11 +213,20 @@ export default {
 	MERGE_BLOCKS( action, store ) {
 		const { dispatch } = store;
 		const [ blockA, blockB ] = action.blocks;
-		const blockType = getBlockType( blockA.name );
 
-		// Only focus the previous block if it's not mergeable
-		if ( ! blockType.merge ) {
+		const blockAType = getBlockType( blockA.name );
+		const blockBType = getBlockType( blockB.name );
+
+		// Bail out early if the first block isn't mergeable
+		if ( ! blockAType.merge ) {
+			// Focus the first block
 			dispatch( focusBlock( blockA.uid ) );
+
+			// Delete the second block if it's empty
+			if ( blockBType.isEmpty && blockBType.isEmpty( blockB.attributes ) ) {
+				dispatch( removeBlock( blockB.uid ) );
+			}
+
 			return;
 		}
 
@@ -232,7 +242,7 @@ export default {
 		}
 
 		// Calling the merge to update the attributes and remove the block to be merged
-		const updatedAttributes = blockType.merge(
+		const updatedAttributes = blockAType.merge(
 			blockA.attributes,
 			blocksWithTheSameType[ 0 ].attributes
 		);
