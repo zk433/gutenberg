@@ -24,7 +24,7 @@ import { getBlock } from '../../selectors';
  */
 const { DOWN } = keycodes;
 
-function BlockSwitcher( { blocks, onTransform, isLocked } ) {
+export function BlockSwitcher( { blocks, onTransform, isLocked } ) {
 	if ( ! blocks || ! blocks[ 0 ] || isLocked ) {
 		return null;
 	}
@@ -126,21 +126,25 @@ function BlockSwitcher( { blocks, onTransform, isLocked } ) {
 	);
 }
 
+export const mapStateToProps = ( state, ownProps ) => {
+	return {
+		blocks: ownProps.uids.map( ( uid ) => getBlock( state, uid ) ),
+	};
+};
+
+export const mapDispatchToProps = ( dispatch, ownProps ) => ( {
+	onTransform( blocks, name ) {
+		dispatch( replaceBlocks(
+			ownProps.uids,
+			switchToBlockType( blocks, name )
+		) );
+	},
+} );
+
 export default flow(
 	connect(
-		( state, ownProps ) => {
-			return {
-				blocks: ownProps.uids.map( ( uid ) => getBlock( state, uid ) ),
-			};
-		},
-		( dispatch, ownProps ) => ( {
-			onTransform( blocks, name ) {
-				dispatch( replaceBlocks(
-					ownProps.uids,
-					switchToBlockType( blocks, name )
-				) );
-			},
-		} )
+		mapStateToProps,
+		mapDispatchToProps
 	),
 	withContext( 'editor' )( ( settings ) => {
 		const { templateLock } = settings;
