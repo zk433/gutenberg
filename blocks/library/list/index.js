@@ -118,8 +118,9 @@ registerBlockType( 'core/list', {
 				transform: ( { value, citation } ) => {
 					return createBlock( 'core/list', {
 						nodeName: 'UL',
-						values: value.map( ( item, index ) => <li key={ index } >{ get( item, 'children.props.children', '' ) } </li> )
-							.concat( citation ? <li key="citation">{ citation }</li> : [] ),
+						values: value.map( item => get( item, 'children.props.children' ) ).concat( citation )
+							.filter( text => typeof text === 'string' )
+							.map( ( text, index ) => <li key={ index }>{ text }</li> ),
 					} );
 				},
 			},
