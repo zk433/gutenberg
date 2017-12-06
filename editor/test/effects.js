@@ -26,6 +26,7 @@ import {
 	fetchReusableBlocks,
 	convertBlockToStatic,
 	convertBlockToReusable,
+	createErrorNotice,
 } from '../actions';
 import reducer from '../reducer';
 import effects from '../effects';
@@ -318,6 +319,62 @@ describe( 'effects', () => {
 
 			expect( dispatch ).toHaveBeenCalledTimes( 1 );
 			expect( dispatch ).toHaveBeenCalledWith( requestMetaBoxUpdates( [ 'normal', 'side' ] ) );
+		} );
+	} );
+
+	describe( '.REQUEST_POST_UPDATE_FAILURE', () => {
+		it( 'should dispatch a notice on failure when publishing a draft fails.', () => {
+			const handler = effects.REQUEST_POST_UPDATE_FAILURE;
+			const dispatch = jest.fn();
+			const store = { getState: () => {}, dispatch };
+
+			const action = {
+				post: {
+					id: 1,
+					title: {
+						raw: 'A History of Pork',
+					},
+					content: {
+						raw: '',
+					},
+					status: 'draft',
+				},
+				edits: {
+					status: 'publish',
+				},
+			};
+
+			handler( action, store );
+
+			expect( dispatch ).toHaveBeenCalledTimes( 1 );
+			expect( dispatch ).toHaveBeenCalledWith( createErrorNotice( 'Publishing failed', { id: 'SAVE_POST_NOTICE_ID' } ) );
+		} );
+
+		it( 'should dispatch a notice on failure when trying to update a draft.', () => {
+			const handler = effects.REQUEST_POST_UPDATE_FAILURE;
+			const dispatch = jest.fn();
+			const store = { getState: () => {}, dispatch };
+
+			const action = {
+				post: {
+					id: 1,
+					title: {
+						raw: 'A History of Pork',
+					},
+					content: {
+						raw: '',
+					},
+					status: 'draft',
+				},
+				edits: {
+					status: 'draft',
+				},
+			};
+
+			handler( action, store );
+
+			expect( dispatch ).toHaveBeenCalledTimes( 1 );
+			expect( dispatch ).toHaveBeenCalledWith( createErrorNotice( 'Updating failed', { id: 'SAVE_POST_NOTICE_ID' } ) );
 		} );
 	} );
 
