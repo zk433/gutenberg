@@ -47,6 +47,10 @@ registerBlockType( 'core/gallery', {
 				},
 			},
 		},
+		useAttachedImages: {
+			type: 'boolean',
+			default: false,
+		},
 		columns: {
 			type: 'number',
 		},
@@ -91,6 +95,10 @@ registerBlockType( 'core/gallery', {
 								id: parseInt( id, 10 ),
 							} ) );
 						},
+					},
+					useAttachedImages: {
+						type: 'boolean',
+						shortcode: ( { named: { ids } } ) => ! ids,
 					},
 					columns: {
 						type: 'number',

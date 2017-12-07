@@ -1,15 +1,24 @@
 /**
  * External Dependencies
  */
+import { connect } from 'react-redux';
 import { filter } from 'lodash';
 
 /**
  * WordPress dependencies
  */
-import { Component } from '@wordpress/element';
+import { Component, compose } from '@wordpress/element';
 import { __ } from '@wordpress/i18n';
 import { mediaUpload } from '@wordpress/utils';
-import { Dashicon, DropZone, Toolbar, Placeholder, FormFileUpload } from '@wordpress/components';
+import {
+	Dashicon,
+	DropZone,
+	Toolbar,
+	Placeholder,
+	FormFileUpload,
+	withAPIData,
+	Spinner,
+} from '@wordpress/components';
 
 /**
  * Internal dependencies
@@ -54,6 +63,23 @@ class GalleryBlock extends Component {
 		this.state = {
 			selectedImage: null,
 		};
+	}
+
+	componentWillReceiveProps( { attachedImages } ) {
+		if ( attachedImages === this.props.attachedImages ) {
+			return;
+		}
+
+		// Process REST API data and commit to attributes.
+		if ( attachedImages && attachedImages.data && ! this.props.url ) {
+			this.props.setAttributes( {
+				images: attachedImages.data.map( ( image ) => ( {
+					url: image.source_url,
+					alt: image.alt_text,
+				} ) ),
+				useAttachedImages: false,
+			} );
+		}
 	}
 
 	onSelectImage( index ) {
@@ -130,7 +156,14 @@ class GalleryBlock extends Component {
 
 	render() {
 		const { attributes, focus, className } = this.props;
-		const { images, columns = defaultColumnsNumber( attributes ), align, imageCrop, linkTo } = attributes;
+		const {
+			images,
+			useAttachedImages,
+			columns = defaultColumnsNumber( attributes ),
+			align,
+			imageCrop,
+			linkTo,
+		} = attributes;
 
 		const blockDescription = (
 			<BlockDescription>
@@ -181,6 +214,21 @@ class GalleryBlock extends Component {
 				</BlockControls>
 			)
 		);
+
+		if ( useAttachedImages && images.length === 0 ) {
+			return [
+				controls,
+				inspectorControls,
+				<Placeholder
+					key="placeholder"
+					instructions={ __( 'Loading gallery images…' ) }
+					icon="format-gallery"
+					label={ __( 'Gallery' ) }
+					className={ className }>
+					<Spinner />
+				</Placeholder>,
+			];
+		}
 
 		if ( images.length === 0 ) {
 			const uploadButtonProps = { isLarge: true };
@@ -262,4 +310,40 @@ class GalleryBlock extends Component {
 	}
 }
 
-export default GalleryBlock;
+// FIXME
+//
+// No block in `blocks/library` ever imports or makes selectors, because no
+// block ever accesses application state outside the attributes interface.
+function getCurrentPostId( state ) {
+	const post = state.currentPost;
+	return post ? post.id : null;
+}
+
+// FIXME
+//
+// No block in `blocks/library` ever accesses Redux state; however, the ID of
+// the current post is needed for the REST API call to `/wp/v2/media`; see
+// `applyWithAPIData`.
+//
+// Right now, this transgression makes the PR work and hopefully gets the
+// discussion started around proper fixes.
+const applyConnect = connect( ( state, { attributes } ) => ( {
+	postId: attributes.useAttachedImages ?
+		getCurrentPostId( state ) :
+		null,
+} ) );
+
+// FIXME
+//
+// Can we assume that consumers of `withAPIData` will routinely need such
+// information as post ID? If so, can this be provided in the same way that
+// `type` and `taxonomy` are (see README for `withAPIData`)? This would remove
+// the need for a Redux connection at block level.
+const applyWithAPIData = withAPIData( ( { postId } ) => ( {
+	attachedImages: postId ? `/wp/v2/media?parent=${ postId }` : {},
+} ) );
+
+export default compose(
+	applyConnect,
+	applyWithAPIData
+)( GalleryBlock );
