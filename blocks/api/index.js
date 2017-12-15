@@ -21,4 +21,4 @@ export {
 	hasBlockSupport,
 	isReusableBlock,
 } from './registration';
-
+export { nodeListToTree } from './matchers';
