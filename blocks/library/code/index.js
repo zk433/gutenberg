@@ -2,6 +2,7 @@
  * External dependencies
  */
 import TextareaAutosize from 'react-autosize-textarea';
+import { escape as escapeString } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -75,6 +76,6 @@ registerBlockType( 'core/code', {
 	},
 
 	save( { attributes } ) {
-		return <pre><code>{ attributes.content }</code></pre>;
+		return <pre><code>{ escapeString( attributes.content ) }</code></pre>;
 	},
 } );

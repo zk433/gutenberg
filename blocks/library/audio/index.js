@@ -174,7 +174,7 @@ registerBlockType( 'core/audio', {
 		const { align, src, caption } = attributes;
 		return (
 			<figure className={ align ? `align${ align }` : null }>
-				<audio controls="controls" src={ src } />
+				<audio controls src={ src } />
 				{ caption && caption.length > 0 && <figcaption>{ caption }</figcaption> }
 			</figure>
 		);

@@ -3,8 +3,12 @@
  */
 import { createElement, Component, cloneElement, Children } from 'react';
 import { render, findDOMNode, createPortal, unmountComponentAtNode } from 'react-dom';
-import { renderToStaticMarkup } from 'react-dom/server';
 import { camelCase, flowRight, isString, upperFirst } from 'lodash';
+
+/**
+ * Internal dependencies
+ */
+import serialize from './serialize';
 
 /**
  * Returns a new element of given type. Type can be either a string tag name or
@@ -74,7 +78,7 @@ export { createPortal };
  * @param  {WPElement} element Element to render
  * @return {String}            HTML
  */
-export { renderToStaticMarkup as renderToString };
+export { serialize as renderToString };
 
 /**
  * Concatenate two or more React children objects
