@@ -371,9 +371,12 @@ export class BlockListBlock extends Component {
 		const { onMouseLeave, onFocus, onReplace } = this.props;
 
 		// Determine whether the block has props to apply to the wrapper.
-		let wrapperProps;
+		let wrapperProps = this.props.wrapperProps;
 		if ( blockType.getEditWrapperProps ) {
-			wrapperProps = blockType.getEditWrapperProps( block.attributes );
+			wrapperProps = {
+				...wrapperProps,
+				...blockType.getEditWrapperProps( block.attributes ),
+			};
 		}
 
 		// Disable reason: Each block can be selected by clicking on it
