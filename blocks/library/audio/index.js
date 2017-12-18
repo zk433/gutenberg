@@ -17,7 +17,6 @@ import { registerBlockType } from '../../api';
 import MediaUploadButton from '../../media-upload-button';
 import Editable from '../../editable';
 import BlockControls from '../../block-controls';
-import BlockAlignmentToolbar from '../../block-alignment-toolbar';
 import InspectorControls from '../../inspector-controls';
 import BlockDescription from '../../block-description';
 
@@ -35,9 +34,6 @@ registerBlockType( 'core/audio', {
 			selector: 'audio',
 			attribute: 'src',
 		},
-		align: {
-			type: 'string',
-		},
 		caption: {
 			type: 'array',
 			source: 'children',
@@ -45,11 +41,8 @@ registerBlockType( 'core/audio', {
 		},
 	},
 
-	getEditWrapperProps( attributes ) {
-		const { align } = attributes;
-		if ( 'left' === align || 'right' === align || 'wide' === align || 'full' === align ) {
-			return { 'data-align': align };
-		}
+	supports: {
+		align: true,
 	},
 
 	edit: class extends Component {
@@ -64,10 +57,9 @@ registerBlockType( 'core/audio', {
 			};
 		}
 		render() {
-			const { align, caption } = this.props.attributes;
+			const { caption } = this.props.attributes;
 			const { setAttributes, focus, setFocus } = this.props;
 			const { editing, className, src } = this.state;
-			const updateAlignment = ( nextAlign ) => setAttributes( { align: nextAlign } );
 			const switchToEditing = () => {
 				this.setState( { editing: true } );
 			};
@@ -90,10 +82,6 @@ registerBlockType( 'core/audio', {
 			};
 			const controls = focus && [
 				<BlockControls key="controls">
-					<BlockAlignmentToolbar
-						value={ align }
-						onChange={ updateAlignment }
-					/>
 					<Toolbar>
 						<Button
 							className="components-icon-button components-toolbar__control"
@@ -171,9 +159,9 @@ registerBlockType( 'core/audio', {
 	},
 
 	save( { attributes } ) {
-		const { align, src, caption } = attributes;
+		const { src, caption } = attributes;
 		return (
-			<figure className={ align ? `align${ align }` : null }>
+			<figure>
 				<audio controls="controls" src={ src } />
 				{ caption && caption.length > 0 && <figcaption>{ caption }</figcaption> }
 			</figure>
