@@ -814,7 +814,7 @@ function gutenberg_editor_scripts_and_styles( $hook ) {
 	$allowed_block_types = apply_filters( 'allowed_block_types', true );
 
 	$editor_settings = array(
-		'wideImages'       => ! empty( $gutenberg_theme_support[0]['wide-images'] ),
+		'wideAlign'        => ! empty( $gutenberg_theme_support[0]['wide-align'] ),
 		'colors'           => $color_palette,
 		'blockTypes'       => $allowed_block_types,
 		'titlePlaceholder' => apply_filters( 'enter_title_here', __( 'Add title', 'gutenberg' ), $post ),
