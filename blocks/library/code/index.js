@@ -70,6 +70,8 @@ registerBlockType( 'core/code', {
 				value={ attributes.content }
 				onChange={ ( event ) => setAttributes( { content: event.target.value } ) }
 				placeholder={ __( 'Write code…' ) }
+				role="textbox"
+				aria-multiline={ true }
 			/>,
 		];
 	},
