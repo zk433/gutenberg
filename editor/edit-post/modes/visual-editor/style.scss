@@ -1,8 +1,24 @@
 .editor-visual-editor {
 	position: relative;
 	height: 100%;
-	margin: 0 auto;
 	padding: 50px 0;
+	background-color: white;
+	position: relative;
+	margin: 0 auto;
+	display: grid;
+	grid-template-columns:
+	  [full-start] minmax(1em, 1fr)
+	  [wide-start] minmax(0, 1fr)
+	  [content-start] minmax(0, 700px) [content-end]
+	  minmax(0, 1fr) [wide-end]
+	  minmax(1em, 1fr) [full-end];
+
+	> div,
+	> div > .block-list {
+		grid-column: full;
+		display: inherit;
+		grid-template-columns: inherit;
+	}
 
 	&,
 	& p {
@@ -13,16 +29,18 @@
 }
 
 .editor-visual-editor .editor-block-list__block {
-	margin-left: auto;
-	margin-right: auto;
-	max-width: $visual-editor-max-width + ( 2 * $block-mover-padding-visible );
+	// margin-left: auto;
+	// margin-right: auto;
+	// max-width: $visual-editor-max-width + ( 2 * $block-mover-padding-visible );
 
 	&[data-align="wide"] {
-		max-width: 1100px;
+		// max-width: 1100px;
+		grid-column: wide;
 	}
 
 	&[data-align="full"] {
 		max-width: 100%;
+		grid-column: full;
 	}
 
 	&[data-align="full"],
@@ -92,9 +110,12 @@
 }
 
 .editor-visual-editor .editor-post-title {
-	margin-left: auto;
-	margin-right: auto;
-	max-width: $visual-editor-max-width + ( 2 * $block-mover-padding-visible );
+	// margin-left: auto;
+	// margin-right: auto;
+	// max-width: $visual-editor-max-width + ( 2 * $block-mover-padding-visible );
+	grid-column: content;
+	justify-self: left;
+	width: 100%;
 
 	.editor-post-permalink {
 		left: $block-padding;
