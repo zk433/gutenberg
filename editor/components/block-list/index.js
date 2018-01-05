@@ -218,7 +218,7 @@ class BlockList extends Component {
 		const { blocks, showContextualToolbar } = this.props;
 
 		return (
-			<div>
+			<div className="block-list">
 				{ !! blocks.length && <BlockListSiblingInserter /> }
 				{ flatMap( blocks, ( uid ) => [
 					<BlockListBlock
