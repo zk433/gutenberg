@@ -14,13 +14,14 @@ import { FormTokenField } from '@wordpress/components';
 /**
  * Internal dependencies
  */
-import { getEditedPostAttribute } from '../../selectors';
-import { editPost } from '../../actions';
+import { getEditedPostAttribute } from '../../store/selectors';
+import { editPost } from '../../store/actions';
 
 const DEFAULT_QUERY = {
 	per_page: 100,
 	orderby: 'count',
 	order: 'desc',
+	_fields: [ 'id', 'name' ],
 };
 const MAX_TERMS_SUGGESTIONS = 20;
 
@@ -156,7 +157,7 @@ class FlatTermSelector extends Component {
 
 		return (
 			<div className="editor-post-taxonomies__flat-terms-selector">
-				<h4 className="editor-post-taxonomies__flat-terms-selector-title">{ label }</h4>
+				<h3 className="editor-post-taxonomies__flat-terms-selector-title">{ label }</h3>
 				<FormTokenField
 					value={ selectedTerms }
 					displayTransform={ unescapeString }

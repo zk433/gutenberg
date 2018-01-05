@@ -32,6 +32,7 @@ import BlockCrashBoundary from './block-crash-boundary';
 import BlockHtml from './block-html';
 import BlockContextualToolbar from './block-contextual-toolbar';
 import BlockMultiControls from './multi-controls';
+import BlockMobileToolbar from './block-mobile-toolbar';
 import {
 	clearSelectedBlock,
 	editPost,
@@ -45,7 +46,7 @@ import {
 	stopTyping,
 	updateBlockAttributes,
 	toggleSelection,
-} from '../../actions';
+} from '../../store/actions';
 import {
 	getBlock,
 	getBlockFocus,
@@ -61,7 +62,7 @@ import {
 	isSelectionEnabled,
 	isTyping,
 	getBlockMode,
-} from '../../selectors';
+} from '../../store/selectors';
 
 const { BACKSPACE, ESCAPE, DELETE, ENTER, UP, RIGHT, DOWN, LEFT } = keycodes;
 
@@ -129,8 +130,7 @@ export class BlockListBlock extends Component {
 	componentWillReceiveProps( newProps ) {
 		if (
 			this.props.order !== newProps.order &&
-			( ( this.props.isSelected && newProps.isSelected ) ||
-			( this.props.isFirstMultiSelected && newProps.isFirstMultiSelected ) )
+			( newProps.isSelected || newProps.isFirstMultiSelected )
 		) {
 			this.previousOffset = this.node.getBoundingClientRect().top;
 		}
@@ -435,6 +435,7 @@ export class BlockListBlock extends Component {
 							/>,
 						] }
 					</BlockCrashBoundary>
+					{ showUI && <BlockMobileToolbar uid={ block.uid } /> }
 				</div>
 				{ !! error && <BlockCrashWarning /> }
 			</div>
