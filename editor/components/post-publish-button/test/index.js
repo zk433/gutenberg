@@ -62,10 +62,18 @@ describe( 'PostPublishButton', () => {
 
 		it( 'should be enabled otherwise', () => {
 			const wrapper = shallow(
-				<PostPublishButton user={ user } isPublishable isSaveable />
+				<PostPublishButton user={ user } isPublishable isSaveable isConnected />
 			);
 
 			expect( wrapper.prop( 'disabled' ) ).toBe( false );
+		} );
+
+		it( 'should not be enabled is editor is offline', () => {
+			const wrapper = shallow(
+				<PostPublishButton user={ user } isPublishable isSaveable isConnected={ false } />
+			);
+
+			expect( wrapper.prop( 'disabled' ) ).toBe( true );
 		} );
 	} );
 
@@ -169,7 +177,7 @@ describe( 'PostPublishButton', () => {
 
 	it( 'should have save modifier class when autosaving and is published', () => {
 		const wrapper = shallow(
-			<PostPublishButton user={ user } isAutosaving />
+			<PostPublishButton user={ user } isAutosaving isPublished />
 		);
 
 		expect( wrapper.hasClass( 'is-saving' ) ).toBe( true );
