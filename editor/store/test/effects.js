@@ -268,14 +268,12 @@ describe( 'effects', () => {
 			handler( {}, store );
 
 			expect( dispatch ).not.toHaveBeenCalled();
-
 		} );
 
 		it( 'should do nothing when network disconnected', () => {
 			selectors.isEditedPostSaveable.mockReturnValue( true );
 			selectors.isEditedPostDirty.mockReturnValue( true );
 			selectors.isCurrentPostPublished.mockReturnValue( false );
-
 			selectors.isEditedPostNew.mockReturnValue( false );
 			selectors.isAutosavingPost.mockReturnValue( false );
 			selectors.isNetworkConnected.mockReturnValue( false );
@@ -283,7 +281,6 @@ describe( 'effects', () => {
 			handler( {}, store );
 
 			expect( dispatch ).not.toHaveBeenCalled();
-
 		} );
 
 		it( 'should set auto-draft to draft before save', () => {
