@@ -55,6 +55,8 @@ import {
 	getBlocks,
 	getReusableBlock,
 	POST_UPDATE_TRANSACTION_ID,
+	isAutosavingPost,
+	isNetworkConnected,
 } from './selectors';
 
 /**
@@ -305,12 +307,13 @@ export default {
 			return;
 		}
 
+		// Bail if we are currently autosaving, or the network is disconnected.
+		if ( isAutosavingPost( state ) || ! isNetworkConnected( state ) ) {
+			return;
+		}
+
+		// Published post autosaving is handled by heartbeat.
 		if ( isCurrentPostPublished( state ) ) {
-			// TODO: Publish autosave.
-			//  - Autosaves are created as revisions for published posts, but
-			//    the necessary REST API behavior does not yet exist
-			//  - May need to check for whether the status of the edited post
-			//    has changed from the saved copy (i.e. published -> pending)
 			return;
 		}
 
