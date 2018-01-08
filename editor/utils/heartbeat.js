@@ -153,7 +153,7 @@ export function setupHeartbeat() {
 	 */
 	$document.on( 'heartbeat-connection-lost.autosave', function( event, error, status ) {
 		// When connection is lost, keep user from submitting changes.
-		if ( 'timeout' === error || 'error' === error || 603 === status ) {
+		if ( 'timeout' === error || 603 === status ) {
 			dispatch( showDisconnectionNotice() );
 			dispatch( toggleNetworkIsConnected( false ) );
 		}
