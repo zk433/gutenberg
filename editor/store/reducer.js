@@ -503,7 +503,7 @@ export function currentlyAutosaving( state = false, action ) {
  * @param  {Object} action Dispatched action
  * @return {Object}        Updated state
  */
-export function networkIsConnected( state = false, action ) {
+export function networkIsConnected( state = true, action ) {
 	switch ( action.type ) {
 		case 'IS_CONNECTED':
 			const { status } = action;
