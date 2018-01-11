@@ -81,13 +81,16 @@ class FormatToolbar extends Component {
 	componentWillReceiveProps( nextProps ) {
 		if ( this.props.selectedNodeId !== nextProps.selectedNodeId ) {
 			this.setState( {
-				isAddingLink: false,
 				isEditingLink: false,
 				settingsVisible: false,
 				opensInNewWindow: !! nextProps.formats.link && !! nextProps.formats.link.target,
 				newLinkValue: '',
 			} );
 		}
+
+		this.setState( {
+			isAddingLink: !! nextProps.formats.link && nextProps.formats.link.isAdding,
+		} );
 	}
 
 	onChangeLinkValue( value ) {

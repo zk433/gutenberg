@@ -70,7 +70,7 @@ function getFormatProperties( formatName, parents ) {
 	}
 }
 
-const DEFAULT_FORMATS = [ 'bold', 'italic', 'strikethrough', 'link' ];
+const DEFAULT_FORMATS = [ 'bold', 'italic', 'strikethrough', 'link', 'code' ];
 
 export default class Editable extends Component {
 	constructor( props ) {
@@ -157,6 +157,12 @@ export default class Editable extends Component {
 		if ( this.props.onSetup ) {
 			this.props.onSetup( editor );
 		}
+
+		editor.shortcuts.add( 'meta+k', '', () => this.changeFormats( { link: { isAdding: true } } ) );
+		editor.shortcuts.add( 'access+a', '', () => this.changeFormats( { link: { isAdding: true } } ) );
+		editor.shortcuts.add( 'access+s', '', () => this.changeFormats( { link: undefined } ) );
+		editor.shortcuts.add( 'access+d', '', () => this.changeFormats( { strikethrough: ! this.state.formats.strikethrough } ) );
+		editor.shortcuts.add( 'access+x', '', () => this.changeFormats( { code: ! this.state.formats.code } ) );
 	}
 
 	/**
@@ -800,6 +806,10 @@ export default class Editable extends Component {
 		forEach( formats, ( formatValue, format ) => {
 			if ( format === 'link' ) {
 				if ( formatValue !== undefined ) {
+					if ( formatValue.isAdding ) {
+						return;
+					}
+
 					const anchor = this.editor.dom.getParent( this.editor.selection.getNode(), 'a' );
 					if ( ! anchor ) {
 						this.removeFormat( 'link' );
