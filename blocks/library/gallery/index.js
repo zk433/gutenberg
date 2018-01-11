@@ -70,6 +70,10 @@ export const settings = {
 	keywords: [ __( 'images' ), __( 'photos' ) ],
 	attributes: blockAttributes,
 
+	supports: {
+		notices: true,
+	},
+
 	transforms: {
 		from: [
 			{

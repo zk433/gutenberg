@@ -9,6 +9,10 @@
 	font-family: $default-font;
 	font-size: $default-font-size;
 	background: $light-gray-100;
+
+	.block-notices {
+		margin: 0 0 12px 0;
+	}
 }
 
 .components-placeholder__label {

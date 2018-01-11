@@ -23,15 +23,31 @@ import { rawHandler } from '../api';
  *
  * @returns {Object} Rendered placeholder.
  */
-export default function ImagePlaceHolder( { className, icon, label, onSelectImage, multiple = false } ) {
+export default function ImagePlaceHolder( {
+	className,
+	icon,
+	label,
+	multiple = false,
+	notices,
+	onError,
+	onSelectImage,
+} ) {
 	const setImage = multiple ? onSelectImage : ( [ image ] ) => onSelectImage( image );
-	const onFilesDrop = ( files ) => mediaUpload( files, setImage );
+	const onFilesDrop = ( files ) => mediaUpload( {
+		filesList: files,
+		onImagesChange: setImage,
+		onError,
+	} );
 	const onHTMLDrop = ( HTML ) => setImage( map(
 		rawHandler( { HTML, mode: 'BLOCKS' } )
 			.filter( ( { name } ) => name === 'core/image' ),
 		'attributes'
 	) );
-	const uploadFromFiles = ( event ) => mediaUpload( event.target.files, setImage );
+	const uploadFromFiles = ( event ) => mediaUpload( {
+		filesList: event.target.files,
+		onImagesChange: setImage,
+		onError,
+	} );
 	return (
 		<Placeholder
 			className={ className }
@@ -39,7 +55,8 @@ export default function ImagePlaceHolder( { className, icon, label, onSelectImag
 				__( 'Drag images here or add from media library' ) :
 				__( 'Drag image here or add from media library' ) }
 			icon={ icon }
-			label={ label } >
+			label={ label }
+			notices={ notices } >
 			<DropZone
 				onFilesDrop={ onFilesDrop }
 				onHTMLDrop={ onHTMLDrop }

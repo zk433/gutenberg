@@ -1,18 +1,31 @@
 /**
  * External Dependencies
  */
-import { compact } from 'lodash';
+import { compact, get, noop } from 'lodash';
 
 /**
- *	Media Upload is used by image and gallery blocks to handle uploading an image.
+ * WordPress dependencies
+ */
+import { __, sprintf } from '@wordpress/i18n';
+
+/**
+ *	Media Upload is used by image and gallery blocks to handle uploading an image
  *	when a file upload button is activated.
  *
  *	TODO: future enhancement to add an upload indicator.
  *
- * @param {Array}    filesList      List of files.
- * @param {Function} onImagesChange Function to be called each time a file or a temporary representation of the file is available.
+ * @param   {Object}   $0                   Parameters object passed to the function.
+ * @param   {Array}    $0.filesList         List of files.
+ * @param   {Function} $0.onImagesChange    Function called each time a file or a temporary representation of the file is available.
+ * @param   {Function} $0.onError           Function called when an error happens.
+ * @param   {number}   $0.maxUploadFileSize Maximum upload size in bytes allowed for the site.
  */
-export function mediaUpload( filesList, onImagesChange ) {
+export function mediaUpload( {
+	filesList,
+	onImagesChange,
+	onError = noop,
+	maxUploadFileSize = get( window, '_wpMediaSettings.maxUploadSize', 0 ),
+} ) {
 	// Cast filesList to array
 	const files = [ ...filesList ];
 
@@ -27,19 +40,33 @@ export function mediaUpload( filesList, onImagesChange ) {
 			return;
 		}
 
+		// verify if file is greater than the maximum file upload size allowed for the site.
+		if ( maxUploadFileSize && mediaFile.size > maxUploadFileSize ) {
+			onError(
+				sprintf(
+					__( '%s exceeds the maximum upload size for this site.' ),
+					mediaFile.name
+				)
+			);
+			return;
+		}
+
 		// Set temporary URL to create placeholder image, this is replaced
 		// with final image from media gallery when upload is `done` below
-		imagesSet.push( { url: window.URL.createObjectURL( mediaFile ) } );
-		onImagesChange( imagesSet );
+		setAndUpdateImages( idx, { url: window.URL.createObjectURL( mediaFile ) } );
 
 		return createMediaFromFile( mediaFile ).then(
 			( savedMedia ) => {
 				setAndUpdateImages( idx, { id: savedMedia.id, url: savedMedia.source_url, link: savedMedia.link } );
 			},
 			() => {
-				// Reset to empty on failure.
-				// TODO: Better failure messaging
 				setAndUpdateImages( idx, null );
+				onError(
+					sprintf(
+						__( 'Error while uploading file %s to the media library.' ),
+						mediaFile.name
+					)
+				);
 			}
 		);
 	} );
