@@ -1,9 +1,9 @@
 import store from '../store';
 import {
-	getCurrentPost,
 	getEditedPostTitle,
 	getEditedPostExcerpt,
 	getEditedPostContent,
+	getCurrentPostId,
 } from '../store/selectors';
 import {
 	toggleAutosave,
@@ -21,6 +21,9 @@ import { doAction } from '@wordpress/hooks';
 
 const DISCONNECTION_NOTICE_ID = 'DISCONNECTION_NOTICE_ID';
 
+/**
+ * Set up the heartbeat functionality for Gutenberg.
+ */
 export function setupHeartbeat() {
 	const $document = jQuery( document );
 	/**
@@ -99,26 +102,28 @@ export function setupHeartbeat() {
 		// Block autosaving for 10 seconds.
 		wp.autosave.server.tempBlockSave();
 
-		const postData = getCurrentPost( state );
-
 		// Dispath an event to set the state isAutosaving to true..
 		dispatch( toggleAutosave( true ) );
 
-		// Add some additional data point copies expected on the back end.
-		postData.post_id = postData.id;
-		postData.post_type = postData.type;
+		// Data for the autosave.
+		const toSend = {
+			post_title: getEditedPostTitle( state ),
+			post_excerpt: getEditedPostExcerpt( state ),
+			content: getEditedPostContent( state ),
+			post_id: getCurrentPostId( state ),
+		};
 
 		// Trigger some legacy events.
-		$document.trigger( 'wpcountwords', [ postData.content ] )
-			.trigger( 'before-autosave', [ postData ] );
+		$document.trigger( 'wpcountwords', [ toSend.content ] )
+			.trigger( 'before-autosave', [ toSend ] );
 
 		// Trigger a hook action.
-		doAction( 'editor.beforeAutosave', postData );
+		doAction( 'editor.beforeAutosave', toSend );
 
 		// Add the nonce to validate the request.
-		postData._wpnonce = jQuery( '#_wpnonce' ).val() || '';
+		toSend._wpnonce = jQuery( '#_wpnonce' ).val() || '';
 
-		return postData;
+		return toSend;
 	};
 
 	// Tie autosave button state triggers to Gutenberg autosave state.
