@@ -16,6 +16,7 @@ import {
 	createReusableBlock,
 	isReusableBlock,
 	getDefaultBlockName,
+	getDefaultBlockForPostFormat,
 } from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
 import { speak } from '@wordpress/a11y';
@@ -52,6 +53,7 @@ import {
 	isEditedPostNew,
 	isEditedPostSaveable,
 	getBlock,
+	getBlockCount,
 	getBlocks,
 	getReusableBlock,
 	getMetaBoxes,
@@ -306,6 +308,8 @@ export default {
 				return block;
 			} );
 			effects.push( resetBlocks( blocks ) );
+		} else if ( getDefaultBlockForPostFormat( post.format ) ) {
+			effects.push( insertBlock( createBlock( getDefaultBlockForPostFormat( post.format ) ) ) );
 		}
 
 		// Resetting post should occur after blocks have been reset, since it's
@@ -492,5 +496,14 @@ export default {
 		// Save the metaboxes
 		window.fetch( window._wpMetaBoxUrl, fetchOptions )
 			.then( () => store.dispatch( metaBoxUpdatesSuccess() ) );
+	},
+	EDIT_POST( action, { getState } ) {
+		const format = get( action, 'edits.format' );
+		if ( format ) {
+			const blockName = getDefaultBlockForPostFormat( format );
+			if ( blockName && getBlockCount( getState() ) === 0 ) {
+				return insertBlock( createBlock( blockName ) );
+			}
+		}
 	},
 };
