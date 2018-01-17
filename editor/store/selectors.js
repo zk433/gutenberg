@@ -220,6 +220,18 @@ export function isEditedPostDirty( state ) {
 }
 
 /**
+ * Returns true if there are unautosaved values for the current edit session, or
+ * false if the editing state matches the autosave.
+ *
+ * @param  {Object}  state Global application state
+ *
+ * @returns {Boolean} Whether unsaved values exist.
+ */
+export function isPostAutosaveDirty( state ) {
+	return state.autosave && state.autosave.isDirty;
+}
+
+/**
  * Returns true if there are no unsaved values for the current edit session and if
  * the currently edited post is new (and has never been saved before).
  *
