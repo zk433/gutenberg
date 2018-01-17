@@ -503,6 +503,25 @@ export function currentlyAutosaving( state = false, action ) {
 }
 
 /**
+ * Reducer returning the currently autosaving status.
+ *
+ * @param  {Object} state  Current state
+ * @param  {Object} action Dispatched action
+ * @return {Object}        Updated state
+ */
+export const autosave = withChangeDetection( function( state = false, action ) {
+	switch ( action.type ) {
+		case 'RESET_AUTOSAVE':
+			return {
+				...state,
+				autosasve: action.autosave
+			}
+	}
+
+	return state;
+} );
+
+/**
  * Reducer returning the currently network connection status.
  *
  * @param  {Object} state  Current state
@@ -873,4 +892,5 @@ export default optimist( combineReducers( {
 	reusableBlocks,
 	currentlyAutosaving,
 	networkIsConnected,
+	autosave,
 } ) );
