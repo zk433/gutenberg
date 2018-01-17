@@ -71,7 +71,8 @@ export function recreateEditorInstance( target, settings ) {
  * @param  {Object}  post     API entity for post to edit
  * @param  {?Object} settings Editor settings object
  * @param  {?Object} autosave Autosave post object
- * @return {Object}           Editor interface
+ *
+ * @returns {Object} Editor interface.
  */
 export function createEditorInstance( id, post, settings, autosave ) {
 	const target = document.getElementById( id );
