@@ -4,12 +4,14 @@ import {
 	getEditedPostExcerpt,
 	getEditedPostContent,
 	getCurrentPostId,
+	isPostAutosaveDirty,
 } from '../store/selectors';
 import {
 	toggleAutosave,
 	removeNotice,
 	toggleNetworkIsConnected,
 	showDisconnectionNotice,
+	resetAutosave,
 } from '../store/actions';
 
 import { compact } from 'lodash';
@@ -36,25 +38,6 @@ export function setupHeartbeat() {
 			window.wpApiSettings.nonce = response[ 'rest-nonce' ];
 		}
 	} );
-
-	/**
-	 * Concatenate the title, content and excerpt.
-	 *
-	 * This is used to track changes when auto-saving.
-	 *
-	 * @since 1.9.0
-	 *
-	 * @param {Object} state The current state.
-	 *
-	 * @returns {string} A concatenated string with title, content and excerpt.
-	 */
-	const getCompareString = function( state ) {
-		return compact( [
-			getEditedPostTitle( state ),
-			getEditedPostContent( state ),
-			getEditedPostExcerpt( state ),
-		] ).join( '::' );
-	};
 
 	/**
 	 * Configure Heartbeat autosaves.
@@ -84,20 +67,10 @@ export function setupHeartbeat() {
 
 		// Get the current editor state and compute the compare string (title::excerpt::content).
 		const state = getState();
-		compareString = getCompareString( state );
 
-		// Initialize lastCompareString if this is the first run and it is undefined.
-		if ( typeof lastCompareString === 'undefined' ) {
-			lastCompareString = compareString;
-		}
-
-		// Bail if no changes to the compare string (title::excerpt::content).
-		if ( compareString === lastCompareString ) {
+		if ( ! isPostAutosaveDirty( state ) ) {
 			return false;
 		}
-
-		// Store the latest compare string.
-		lastCompareString = compareString;
 
 		// Block autosaving for 10 seconds.
 		wp.autosave.server.tempBlockSave();
@@ -119,6 +92,8 @@ export function setupHeartbeat() {
 
 		// Trigger a hook action.
 		doAction( 'editor.beforeAutosave', toSend );
+
+		dispatch( resetAutosave( toSend ) );
 
 		// Add the nonce to validate the request.
 		toSend._wpnonce = jQuery( '#_wpnonce' ).val() || '';
