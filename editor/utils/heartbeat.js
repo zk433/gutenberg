@@ -76,11 +76,12 @@ export function setupHeartbeat() {
 			post_excerpt: getEditedPostExcerpt( state ),
 			content: getEditedPostContent( state ),
 			post_id: getCurrentPostId( state ),
-			_wpnonce: jQuery( '#_wpnonce' ).val() || '',
 		};
 
+		isPostAutosaveDirty( state );
+
 		// Store the current editor values into the state autosave.
-		dispatch( updateAutosave( toSend ) );
+		dispatch( resetAutosave( toSend ) );
 
 		// If the autosave is clean, no need to save.
 		if ( ! isPostAutosaveDirty( state ) ) {
@@ -101,6 +102,7 @@ export function setupHeartbeat() {
 		doAction( 'editor.beforeAutosave', toSend );
 
 		dispatch( resetAutosave( toSend ) );
+		toSend._wpnonce = jQuery( '#_wpnonce' ).val() || '';
 
 		return toSend;
 	};
