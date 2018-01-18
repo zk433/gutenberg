@@ -78,8 +78,6 @@ export function setupHeartbeat() {
 			post_id: getCurrentPostId( state ),
 		};
 
-		isPostAutosaveDirty( state );
-
 		// Store the current editor values into the state autosave.
 		dispatch( resetAutosave( toSend ) );
 
