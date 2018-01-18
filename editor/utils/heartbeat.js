@@ -12,6 +12,7 @@ import {
 	toggleNetworkIsConnected,
 	showDisconnectionNotice,
 	resetAutosave,
+	updateAutosave,
 } from '../store/actions';
 
 import { compact } from 'lodash';
@@ -28,6 +29,7 @@ const DISCONNECTION_NOTICE_ID = 'DISCONNECTION_NOTICE_ID';
  */
 export function setupHeartbeat() {
 	const $document = jQuery( document );
+
 	/**
 	 * Configure heartbeat to refresh the wp-api nonce, keeping the editor authorization intact.
 	 *
@@ -68,6 +70,18 @@ export function setupHeartbeat() {
 		// Get the current editor state and compute the compare string (title::excerpt::content).
 		const state = getState();
 
+		const toSend = {
+			post_title: getEditedPostTitle( state ),
+			post_excerpt: getEditedPostExcerpt( state ),
+			content: getEditedPostContent( state ),
+			post_id: getCurrentPostId( state ),
+			_wpnonce: jQuery( '#_wpnonce' ).val() || '',
+		};
+
+		// Store the current editor values into the state autosave.
+		dispatch( updateAutosave( toSend ) );
+
+		// If the autosave is clean, no need to save.
 		if ( ! isPostAutosaveDirty( state ) ) {
 			return false;
 		}
@@ -78,14 +92,6 @@ export function setupHeartbeat() {
 		// Dispath an event to set the state isAutosaving to true..
 		dispatch( toggleAutosave( true ) );
 
-		// Data for the autosave.
-		const toSend = {
-			post_title: getEditedPostTitle( state ),
-			post_excerpt: getEditedPostExcerpt( state ),
-			content: getEditedPostContent( state ),
-			post_id: getCurrentPostId( state ),
-		};
-
 		// Trigger some legacy events.
 		$document.trigger( 'wpcountwords', [ toSend.content ] )
 			.trigger( 'before-autosave', [ toSend ] );
@@ -94,9 +100,6 @@ export function setupHeartbeat() {
 		doAction( 'editor.beforeAutosave', toSend );
 
 		dispatch( resetAutosave( toSend ) );
-
-		// Add the nonce to validate the request.
-		toSend._wpnonce = jQuery( '#_wpnonce' ).val() || '';
 
 		return toSend;
 	};
