@@ -107,11 +107,6 @@ export function setupHeartbeat() {
 		return toSend;
 	};
 
-	// Tie autosave button state triggers to Gutenberg autosave state.
-	$document.on( 'autosave-enable-buttons', function() {
-		dispatch( toggleAutosave( false ) );
-	} );
-
 	/**
 	 * Disable the default (classic editor) autosave connection event handlers.
 	 */
@@ -126,6 +121,7 @@ export function setupHeartbeat() {
 	$document.on( 'heartbeat-tick.autosave', function( event, data ) {
 		if ( data.wp_autosave ) {
 			if ( data.wp_autosave.success ) {
+				dispatch( toggleAutosave( false ) );
 				dispatch( updateAutosaveStatusMessage( data.wp_autosave.message ) );
 			}
 		}
