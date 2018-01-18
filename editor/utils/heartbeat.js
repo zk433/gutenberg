@@ -117,8 +117,10 @@ export function setupHeartbeat() {
 	 */
 	$document.on( 'heartbeat-tick.autosave', function( event, data ) {
 		if ( data.wp_autosave ) {
+
+			// Autosave is complete, success or not.
+			dispatch( toggleAutosave( false ) );
 			if ( data.wp_autosave.success ) {
-				dispatch( toggleAutosave( false ) );
 				dispatch( updateAutosaveStatusMessage( data.wp_autosave.message ) );
 			}
 		}
