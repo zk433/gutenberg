@@ -512,14 +512,15 @@ export function currentlyAutosaving( state = false, action ) {
 export const autosave = withChangeDetection( function( state = false, action ) {
 	switch ( action.type ) {
 		case 'RESET_AUTOSAVE':
+		case 'UPDATE_AUTOSAVE':
 			return {
 				...state,
-				autosasve: action.autosave
+				autosave: action.autosave
 			}
 	}
 
 	return state;
-} );
+}, { resetTypes: [ 'RESET_AUTOSAVE' ] } );
 
 /**
  * Reducer returning the currently network connection status.
