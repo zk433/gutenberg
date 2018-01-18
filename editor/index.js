@@ -43,8 +43,8 @@ if ( dateSettings.timezone.string ) {
  * an unhandled error occurs, replacing previously mounted editor element using
  * an initial state from prior to the crash.
  *
- * @param {Element} target       DOM node in which editor is rendered
- * @param {?Object} settings     Editor settings object
+ * @param {Element} target   DOM node in which editor is rendered.
+ * @param {?Object} settings Editor settings object.
  */
 export function recreateEditorInstance( target, settings ) {
 	unmountComponentAtNode( target );
@@ -67,9 +67,9 @@ export function recreateEditorInstance( target, settings ) {
  * The return value of this function is not necessary if we change where we
  * call createEditorInstance(). This is due to metaBox timing.
  *
- * @param  {String}  id       Unique identifier for editor instance
- * @param  {Object}  post     API entity for post to edit
- * @param  {?Object} settings Editor settings object
+ * @param {string}  id       Unique identifier for editor instance.
+ * @param {Object}  post     API entity for post to edit.
+ * @param {?Object} settings Editor settings object.
  * @param  {?Object} autosave Autosave post object
  *
  * @returns {Object} Editor interface.
