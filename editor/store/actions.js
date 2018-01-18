@@ -67,6 +67,20 @@ export function updateAutosave( autosave ) {
 }
 
 /**
+ * Returns an action object used to update the autosave status message.
+ *
+ * @param  {Object} autosave Post object
+ *
+ * @returns {Object} Action object.
+ */
+export function updateAutosaveStatusMessage( message ) {
+	return {
+		type: 'UPDATE_AUTOSAVE_STATUS_MESSAGE',
+		message,
+	};
+}
+
+/**
  * Returns an action object used in signalling that editor has initialized as a
  * new post with specified edits which should be considered non-dirtying.
  *
