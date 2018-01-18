@@ -228,7 +228,18 @@ export function isEditedPostDirty( state ) {
  * @returns {Boolean} Whether unsaved values exist.
  */
 export function isPostAutosaveDirty( state ) {
-	return state.autosave && state.autosave.isDirty;
+	return state.autosave.isDirty;
+}
+
+/**
+ * Returns the autosave status message.
+ *
+ * @param  {Object}  state Global application state
+ *
+ * @returns {Boolean} Whether unsaved values exist.
+ */
+export function getAutosaveMessage( state ) {
+	return state.autosave.message;
 }
 
 /**
