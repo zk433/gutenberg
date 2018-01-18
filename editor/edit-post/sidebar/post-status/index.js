@@ -20,6 +20,7 @@ import PostSticky from '../post-sticky';
 import PostAuthor from '../post-author';
 import PostFormat from '../post-format';
 import PostPendingStatus from '../post-pending-status';
+import AutosaveMessage from '../autosave-message';
 import {
 	isEditorSidebarPanelOpened,
 } from '../../../store/selectors';
@@ -35,6 +36,7 @@ function PostStatus( { isOpened, onTogglePanel } ) {
 		<PanelBody className="editor-post-status" title={ __( 'Status & Visibility' ) } opened={ isOpened } onToggle={ onTogglePanel }>
 			<PostVisibility />
 			<PostSchedule />
+			<AutosaveMessage />
 			<PostFormat />
 			<PostSticky />
 			<PostPendingStatus />
