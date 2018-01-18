@@ -52,6 +52,21 @@ export function resetAutosave( autosave ) {
 }
 
 /**
+ * Returns an action object used to update the latest version of the
+ * autosave has been received.
+ *
+ * @param  {Object} autosave Post object
+ *
+ * @returns {Object} Action object.
+ */
+export function updateAutosave( autosave ) {
+	return {
+		type: 'UPDATE_AUTOSAVE',
+		autosave,
+	};
+}
+
+/**
  * Returns an action object used in signalling that editor has initialized as a
  * new post with specified edits which should be considered non-dirtying.
  *
