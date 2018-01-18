@@ -509,13 +509,18 @@ export function currentlyAutosaving( state = false, action ) {
  * @param  {Object} action Dispatched action
  * @return {Object}        Updated state
  */
-export const autosave = withChangeDetection( function( state = false, action ) {
+export const autosave = withChangeDetection( function( state = { message: '', autosave: false }, action ) {
 	switch ( action.type ) {
 		case 'RESET_AUTOSAVE':
 		case 'UPDATE_AUTOSAVE':
 			return {
 				...state,
 				autosave: action.autosave
+			}
+		case 'UPDATE_AUTOSAVE_STATUS_MESSAGE':
+			return {
+				...state,
+				message: action.message
 			}
 	}
 
