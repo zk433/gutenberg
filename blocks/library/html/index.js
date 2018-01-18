@@ -39,7 +39,7 @@ export const settings = {
 
 	edit: withState( {
 		preview: false,
-	} )( ( { attributes, setAttributes, setState, isSelected, preview } ) => (
+	} )( ( { attributes, setAttributes, setState, isSelected, toggleSelection, preview } ) => (
 		<div className="wp-block-html">
 			{ isSelected && (
 				<BlockControls>
@@ -64,7 +64,8 @@ export const settings = {
 			) : (
 				<CodeEditor
 					value={ attributes.content }
-					focus={ !! focus }
+					focus={ isSelected }
+					onFocus={ toggleSelection }
 					onChange={ content => setAttributes( { content } ) }
 				/>
 			) }
