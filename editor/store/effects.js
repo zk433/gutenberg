@@ -40,6 +40,7 @@ import {
 	updateReusableBlock,
 	saveReusableBlock,
 	insertBlock,
+	resetAutosave,
 } from './actions';
 import {
 	getCurrentPost,
@@ -346,6 +347,7 @@ export default {
 		// Resetting post should occur after blocks have been reset, since it's
 		// the post reset that restarts history (used in dirty detection).
 		effects.push( resetPost( post ) );
+		effects.push( resetAutosave( post ) );
 
 		// Include auto draft title in edits while not flagging post as dirty
 		if ( post.status === 'auto-draft' ) {
