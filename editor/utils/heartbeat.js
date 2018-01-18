@@ -13,6 +13,7 @@ import {
 	showDisconnectionNotice,
 	resetAutosave,
 	updateAutosave,
+	updateAutosaveStatusMessage,
 } from '../store/actions';
 
 import { compact } from 'lodash';
@@ -115,6 +116,18 @@ export function setupHeartbeat() {
 	$document.off( 'heartbeat-connection-lost.autosave' );
 	$document.off( 'heartbeat-connection-restored.autosave' );
 	$document.off( 'heartbeat-send.autosave' );
+	$document.off( 'heartbeat-tick.autosave' );
+
+	/**
+	 * Handle the heartbeat tick event, possibly adding a response message to state.
+	 */
+	$document.on( 'heartbeat-tick.autosave', function( event, data ) {
+		if ( data.wp_autosave ) {
+			if ( data.wp_autosave.success ) {
+				dispatch( updateAutosaveStatusMessage( data.wp_autosave.message ) );
+			}
+		}
+	} );
 
 	/**
 	 * Handle the heartbeat-send event, attaching autosave data if available.
