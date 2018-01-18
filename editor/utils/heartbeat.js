@@ -12,11 +12,8 @@ import {
 	toggleNetworkIsConnected,
 	showDisconnectionNotice,
 	resetAutosave,
-	updateAutosave,
 	updateAutosaveStatusMessage,
 } from '../store/actions';
-
-import { compact } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -46,9 +43,6 @@ export function setupHeartbeat() {
 	 * Configure Heartbeat autosaves.
 	 */
 	const { dispatch, getState } = store;
-
-	let compareString;
-	let lastCompareString;
 
 	/**
 	 * Autosave 'save' function that pulls content from Gutenberg state. Based on `wp.autosave.save`.
@@ -117,7 +111,6 @@ export function setupHeartbeat() {
 	 */
 	$document.on( 'heartbeat-tick.autosave', function( event, data ) {
 		if ( data.wp_autosave ) {
-
 			// Autosave is complete, success or not.
 			dispatch( toggleAutosave( false ) );
 			if ( data.wp_autosave.success ) {

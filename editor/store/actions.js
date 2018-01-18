@@ -40,21 +40,21 @@ export function resetPost( post ) {
  * Returns an action object used in signaling that the latest version of the
  * autosave has been received.
  *
- * @param  {Object} autosave Post object
+ * @param  {Object} autosaveData Post object
  *
  * @returns {Object} Action object.
  */
-export function resetAutosave( autosave ) {
+export function resetAutosave( autosaveData ) {
 	return {
 		type: 'RESET_AUTOSAVE',
-		autosave,
+		autosave: autosaveData,
 	};
 }
 
 /**
  * Returns an action object used to update the autosave status message.
  *
- * @param  {Object} autosave Post object
+ * @param  {Object} message Post object
  *
  * @returns {Object} Action object.
  */

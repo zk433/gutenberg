@@ -514,13 +514,13 @@ export const autosave = withChangeDetection( function( state = { message: '', au
 		case 'RESET_AUTOSAVE':
 			return {
 				...state,
-				autosave: action.autosave
-			}
+				autosave: action.autosave,
+			};
 		case 'UPDATE_AUTOSAVE_STATUS_MESSAGE':
 			return {
 				...state,
-				message: action.message
-			}
+				message: action.message,
+			};
 	}
 
 	return state;
