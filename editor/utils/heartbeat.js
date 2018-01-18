@@ -99,7 +99,6 @@ export function setupHeartbeat() {
 		// Trigger a hook action.
 		doAction( 'editor.beforeAutosave', toSend );
 
-		dispatch( resetAutosave( toSend ) );
 		toSend._wpnonce = jQuery( '#_wpnonce' ).val() || '';
 
 		return toSend;
