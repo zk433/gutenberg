@@ -783,6 +783,7 @@ function gutenberg_editor_scripts_and_styles( $hook ) {
 		),
 	) );
 	wp_enqueue_script( 'heartbeat' );
+	wp_enqueue_script( 'autosave' );
 	wp_enqueue_script( 'wp-edit-post' );
 
 	// Register `wp-utils` as a dependency of `word-count` to ensure that
