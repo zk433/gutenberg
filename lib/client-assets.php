@@ -159,7 +159,43 @@ function gutenberg_register_scripts_and_styles() {
 		'before'
 	);
 
+	wp_register_script(
+		'wp-editor',
+		gutenberg_url( 'editor/build/index.js' ),
+		array( 'postbox', 'jquery', 'wp-api', 'wp-data', 'wp-date', 'wp-i18n', 'wp-blocks', 'wp-element', 'wp-components', 'wp-utils', 'word-count', 'editor' ),
+		filemtime( gutenberg_dir_path() . 'editor/build/index.js' )
+	);
+
+	wp_register_script(
+		'wp-edit-post',
+		gutenberg_url( 'edit-post/build/index.js' ),
+		array( 'jquery', 'heartbeat', 'wp-element', 'wp-components', 'wp-editor', 'wp-i18n', 'wp-date', 'wp-utils', 'wp-data' ),
+		filemtime( gutenberg_dir_path() . 'edit-post/build/index.js' ),
+		true
+	);
+
 	// Editor Styles.
+	wp_register_style(
+		'wp-editor-font',
+		'https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i'
+	);
+
+	wp_register_style(
+		'wp-editor',
+		gutenberg_url( 'editor/build/style.css' ),
+		array( 'wp-components', 'wp-blocks', 'wp-edit-blocks', 'wp-editor-font' ),
+		filemtime( gutenberg_dir_path() . 'editor/build/style.css' )
+	);
+	wp_style_add_data( 'wp-editor', 'rtl', 'replace' );
+
+	wp_register_style(
+		'wp-edit-post',
+		gutenberg_url( 'edit-post/build/style.css' ),
+		array( 'wp-components', 'wp-editor' ),
+		filemtime( gutenberg_dir_path() . 'edit-post/build/style.css' )
+	);
+	wp_style_add_data( 'wp-edit-post', 'rtl', 'replace' );
+
 	wp_register_style(
 		'wp-components',
 		gutenberg_url( 'components/build/style.css' ),
@@ -686,15 +722,6 @@ function gutenberg_editor_scripts_and_styles( $hook ) {
 
 	gutenberg_extend_wp_api_backbone_client();
 
-	// The editor code itself.
-	wp_enqueue_script(
-		'wp-editor',
-		gutenberg_url( 'editor/build/index.js' ),
-		array( 'postbox', 'jquery', 'wp-api', 'wp-data', 'wp-date', 'wp-i18n', 'wp-blocks', 'wp-element', 'wp-components', 'wp-utils', 'word-count', 'editor', 'heartbeat', 'autosave' ),
-		filemtime( gutenberg_dir_path() . 'editor/build/index.js' ),
-		true // enqueue in the footer.
-	);
-
 	gutenberg_fix_jetpack_freeform_block_conflict();
 	wp_localize_script( 'wp-editor', 'wpEditorL10n', array(
 		'tinymce' => array(
@@ -756,6 +783,8 @@ function gutenberg_editor_scripts_and_styles( $hook ) {
 		),
 	) );
 
+	wp_enqueue_script( 'wp-edit-post' );
+
 	// Register `wp-utils` as a dependency of `word-count` to ensure that
 	// `wp-utils` doesn't clobbber `word-count`.  See WordPress/gutenberg#1569.
 	$word_count_script = wp_scripts()->query( 'word-count' );
@@ -766,39 +795,6 @@ function gutenberg_editor_scripts_and_styles( $hook ) {
 	$post_to_edit = gutenberg_get_post_to_edit( $post );
 	if ( is_wp_error( $post_to_edit ) ) {
 		wp_die( $post_to_edit->get_error_message() );
-	}
-
-	// Add autosave data if it is newer and changed.
-	$autosave      = wp_get_post_autosave( $post->ID );
-	$show_autosave = false;
-
-	// Is the autosave newer than the post?
-	if (
-		$autosave &&
-		mysql2date( 'U', $autosave->post_modified_gmt, false ) > mysql2date( 'U', $post->post_modified_gmt, false )
-	) {
-		foreach ( _wp_post_revision_fields( $post ) as $autosave_field => $_autosave_field ) {
-			if ( normalize_whitespace( $autosave->$autosave_field ) != normalize_whitespace( $post->$autosave_field ) ) {
-				$show_autosave = true;
-				break;
-			}
-		}
-	}
-
-	// If this autosave isn't newer and different from the current post, remove.
-	if ( $autosave && ! $show_autosave ) {
-		wp_delete_post_revision( $autosave->ID );
-	}
-
-	if ( $show_autosave ) {
-		wp_localize_script(
-			'wp-editor',
-			'_wpAutosave',
-			array(
-				'id'        => $autosave->ID,
-				'edit_link' => add_query_arg( 'gutenberg', true, get_edit_post_link( $autosave->ID ) ),
-			)
-		);
 	}
 
 	// Set initial title to empty string for auto draft for duration of edit.
@@ -841,14 +837,14 @@ function gutenberg_editor_scripts_and_styles( $hook ) {
 
 	// Initialize the post data.
 	wp_add_inline_script(
-		'wp-editor',
+		'wp-edit-post',
 		'window._wpGutenbergPost = ' . wp_json_encode( $post_to_edit ) . ';'
 	);
 
 	// Prepopulate with some test content in demo.
 	if ( $is_new_post && $is_demo ) {
 		wp_add_inline_script(
-			'wp-editor',
+			'wp-edit-post',
 			file_get_contents( gutenberg_dir_path() . 'post-content.js' )
 		);
 	}
@@ -856,7 +852,7 @@ function gutenberg_editor_scripts_and_styles( $hook ) {
 	// Prepare Jed locale data.
 	$locale_data = gutenberg_get_jed_locale_data( 'gutenberg' );
 	wp_add_inline_script(
-		'wp-editor',
+		'wp-edit-post',
 		'wp.i18n.setLocaleData( ' . json_encode( $locale_data ) . ' );',
 		'before'
 	);
@@ -870,6 +866,7 @@ function gutenberg_editor_scripts_and_styles( $hook ) {
 		'post'           => $post_to_edit['id'],
 		'action'         => 'edit',
 		'classic-editor' => true,
+		'meta_box'       => true,
 	), $meta_box_url );
 	wp_localize_script( 'wp-editor', '_wpMetaBoxUrl', $meta_box_url );
 
@@ -889,7 +886,7 @@ function gutenberg_editor_scripts_and_styles( $hook ) {
 
 	if ( ! empty( $gutenberg_theme_support ) ) {
 		wp_add_inline_script(
-			'wp-editor',
+			'wp-edit-post',
 			'console.warn( "' .
 				__( 'Adding theme support using the `gutenberg` array is deprecated. See https://wordpress.org/gutenberg/handbook/extensibility/theme-support/ for details.', 'gutenberg' ) .
 			'");'
@@ -922,11 +919,12 @@ function gutenberg_editor_scripts_and_styles( $hook ) {
 	$script .= sprintf( 'var editorSettings = %s;', wp_json_encode( $editor_settings ) );
 	$script .= <<<JS
 		window._wpLoadGutenbergEditor = wp.api.init().then( function() {
-			return wp.editor.createEditorInstance( 'editor', window._wpGutenbergPost, editorSettings, window._wpAutosave );
+			wp.blocks.registerCoreBlocks();
+			return wp[ 'edit-post' ].initializeEditor( 'editor', window._wpGutenbergPost, editorSettings );
 		} );
 JS;
 	$script .= '} )();';
-	wp_add_inline_script( 'wp-editor', $script );
+	wp_add_inline_script( 'wp-edit-post', $script );
 
 	/**
 	 * Scripts
@@ -940,18 +938,7 @@ JS;
 	 * Styles
 	 */
 
-	wp_enqueue_style(
-		'wp-editor-font',
-		'https://fonts.googleapis.com/css?family=Noto+Serif:400,400i,700,700i'
-	);
-
-	wp_enqueue_style(
-		'wp-editor',
-		gutenberg_url( 'editor/build/style.css' ),
-		array( 'wp-components', 'wp-blocks', 'wp-edit-blocks' ),
-		filemtime( gutenberg_dir_path() . 'editor/build/style.css' )
-	);
-	wp_style_add_data( 'wp-editor', 'rtl', 'replace' );
+	wp_enqueue_style( 'wp-edit-post' );
 
 	/**
 	 * Fires after block assets have been enqueued for the editing interface.
