@@ -73,6 +73,7 @@ class EditorProvider extends Component {
 			// eslint-disable-next-line no-console
 			console.error( 'The Editor Provider Props are immutable.' );
 		}
+	}
 
 	initializeMetaBoxes( metaBoxes ) {
 		this.store.dispatch( initializeMetaBoxState( metaBoxes ) );
