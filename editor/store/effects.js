@@ -2,7 +2,7 @@
  * External dependencies
  */
 import { BEGIN, COMMIT, REVERT } from 'redux-optimist';
-import { get, includes, map, castArray, uniqueId, reduce, values, some } from 'lodash';
+import { get, has, includes, map, castArray, uniqueId, reduce, values, some } from 'lodash';
 
 /**
  * WordPress dependencies
@@ -244,14 +244,11 @@ export default {
 	TRASH_POST_SUCCESS( action ) {
 		const { postId, postType } = action;
 
-		// Delay redirect to ensure store has been updated with the successful trash.
-		setTimeout( () => {
 			window.location.href = getWPAdminURL( 'edit.php', {
 				trashed: 1,
 				post_type: postType,
 				ids: postId,
 			} );
-		} );
 	},
 	TRASH_POST_FAILURE( action, store ) {
 		const message = action.error.message && action.error.code !== 'unknown_error' ? action.error.message : __( 'Trashing failed' );
@@ -359,9 +356,18 @@ export default {
 			} ) );
 		}
 
+		// Resetting post should occur after blocks have been reset, since it's
+		// the post reset that restarts history (used in dirty detection).
+		effects.push( resetPost( post ) );
+
 		return effects;
 	},
 	FETCH_REUSABLE_BLOCKS( action, store ) {
+		// TODO: these are potentially undefined, this fix is in place
+		// until there is a filter to not use reusable blocks if undefined
+		if ( ! has( wp, 'api.models.Blocks' ) && ! has( wp, 'api.collections.Blocks' ) ) {
+			return;
+		}
 		const { id } = action;
 		const { dispatch } = store;
 
@@ -396,12 +402,19 @@ export default {
 		);
 	},
 	SAVE_REUSABLE_BLOCK( action, store ) {
+		// TODO: these are potentially undefined, this fix is in place
+		// until there is a filter to not use reusable blocks if undefined
+		if ( ! has( wp, 'api.models.Blocks' ) ) {
+			return;
+		}
+
 		const { id } = action;
 		const { getState, dispatch } = store;
 
 		const { title, type, attributes, isTemporary } = getReusableBlock( getState(), id );
 		const content = serialize( createBlock( type, attributes ) );
 		const requestData = isTemporary ? { title, content } : { id, title, content };
+
 		new wp.api.models.Blocks( requestData ).save().then(
 			( updatedReusableBlock ) => {
 				dispatch( {
@@ -423,6 +436,12 @@ export default {
 		);
 	},
 	DELETE_REUSABLE_BLOCK( action, store ) {
+		// TODO: these are potentially undefined, this fix is in place
+		// until there is a filter to not use reusable blocks if undefined
+		if ( ! has( wp, 'api.models.Blocks' ) ) {
+			return;
+		}
+
 		const { id } = action;
 		const { getState, dispatch } = store;
 

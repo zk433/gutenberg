@@ -6,7 +6,13 @@ import { noop, reduce, set } from 'lodash';
 /**
  * WordPress dependencies
  */
-import { getBlockTypes, unregisterBlockType, registerBlockType, createBlock } from '@wordpress/blocks';
+import {
+	getBlockTypes,
+	unregisterBlockType,
+	registerBlockType,
+	createBlock,
+	createReusableBlock,
+} from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -499,6 +505,7 @@ describe( 'effects', () => {
 			const result = handler( { post, settings: {} } );
 
 			expect( result ).toEqual( [
+				setupNewPost( { title: 'A History of Pork' } ),
 				resetPost( post ),
 				autosave,
 				setupNewPost( { title: 'A History of Pork' } ),
@@ -658,14 +665,9 @@ describe( 'effects', () => {
 					}
 				} );
 
-				const reusableBlock = {
-					id: '69f00b2b-ea09-4d5c-a98f-0b1112d7d400',
-					title: 'My cool block',
-					type: 'core/test-block',
-					attributes: {
+				const reusableBlock = createReusableBlock( 'core/test-block', {
 						name: 'Big Bird',
-					},
-				};
+				} );
 
 				const initialState = reducer( undefined, {} );
 				const action = updateReusableBlock( reusableBlock.id, reusableBlock );
@@ -677,8 +679,7 @@ describe( 'effects', () => {
 				handler( saveReusableBlock( reusableBlock.id ), store );
 
 				expect( modelAttributes ).toEqual( {
-					id: '69f00b2b-ea09-4d5c-a98f-0b1112d7d400',
-					title: 'My cool block',
+					title: 'Untitled block',
 					content: '<!-- wp:test-block {\"name\":\"Big Bird\"} /-->',
 				} );
 				return promise.then( () => {
@@ -699,14 +700,9 @@ describe( 'effects', () => {
 					}
 				} );
 
-				const reusableBlock = {
-					id: '69f00b2b-ea09-4d5c-a98f-0b1112d7d400',
-					name: 'My cool block',
-					type: 'core/test-block',
-					attributes: {
+				const reusableBlock = createReusableBlock( 'core/test-block', {
 						name: 'Big Bird',
-					},
-				};
+				} );
 
 				const initialState = reducer( undefined, {} );
 				const action = updateReusableBlock( reusableBlock.id, reusableBlock );
@@ -745,13 +741,9 @@ describe( 'effects', () => {
 
 				const id = 123;
 
-				const associatedBlock = {
-					uid: 'd6b55aa9-16b5-4123-9675-749d75a7f14d',
-					name: 'core/block',
-					attributes: {
+				const associatedBlock = createBlock( 'core/block', {
 						ref: id,
-					},
-				};
+				} );
 
 				const actions = [
 					resetBlocks( [ associatedBlock ] ),
@@ -826,21 +818,12 @@ describe( 'effects', () => {
 			const handler = effects.CONVERT_BLOCK_TO_STATIC;
 
 			it( 'should convert a reusable block into a static block', () => {
-				const reusableBlock = {
-					id: '69f00b2b-ea09-4d5c-a98f-0b1112d7d400',
-					name: 'My cool block',
-					type: 'core/test-block',
-					attributes: {
+				const reusableBlock = createReusableBlock( 'core/test-block', {
 						name: 'Big Bird',
-					},
-				};
-				const staticBlock = {
-					uid: 'd6b55aa9-16b5-4123-9675-749d75a7f14d',
-					name: 'core/block',
-					attributes: {
+				} );
+				const staticBlock = createBlock( 'core/block', {
 						ref: reusableBlock.id,
-					},
-				};
+				} );
 
 				const actions = [
 					resetBlocks( [ staticBlock ] ),
@@ -867,13 +850,9 @@ describe( 'effects', () => {
 			const handler = effects.CONVERT_BLOCK_TO_REUSABLE;
 
 			it( 'should convert a static block into a reusable block', () => {
-				const staticBlock = {
-					uid: 'd6b55aa9-16b5-4123-9675-749d75a7f14d',
-					name: 'core/test-block',
-					attributes: {
+				const staticBlock = createBlock( 'core/test-block', {
 						name: 'Big Bird',
-					},
-				};
+				} );
 
 				const initialState = reducer( undefined, {} );
 				const state = reducer( initialState, resetBlocks( [ staticBlock ] ) );
