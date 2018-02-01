@@ -496,7 +496,7 @@ export function blocksMode( state = {}, action ) {
  *
  * @param  {Object} state  Current state
  * @param  {Object} action Dispatched action
- * @return {Object}        Updated state
+ * @returns {Object}        Updated state
  */
 export function currentlyAutosaving( state = false, action ) {
 	switch ( action.type ) {
@@ -513,7 +513,7 @@ export function currentlyAutosaving( state = false, action ) {
  *
  * @param  {Object} state  Current state
  * @param  {Object} action Dispatched action
- * @return {Object}        Updated state
+ * @returns {Object}        Updated state
  */
 export const autosave = withChangeDetection( function( state = { message: '', autosave: false }, action ) {
 	switch ( action.type ) {
@@ -537,7 +537,7 @@ export const autosave = withChangeDetection( function( state = { message: '', au
  *
  * @param  {Object} state  Current state
  * @param  {Object} action Dispatched action
- * @return {Object}        Updated state
+ * @returns {Object}        Updated state
  */
 export function networkIsConnected( state = true, action ) {
 	switch ( action.type ) {
@@ -591,13 +591,13 @@ export function preferences( state = PREFERENCES_DEFAULTS, action ) {
 
 				const isSameAsInsert = ( { name, ref } ) => name === insert.name && ref === insert.ref;
 
-			return {
+				return {
 					...prevState,
 					recentInserts: [
 						insert,
 						...reject( prevState.recentInserts, isSameAsInsert ),
 					],
-			};
+				};
 			}, state );
 
 		case 'REMOVE_REUSABLE_BLOCK':

@@ -244,11 +244,11 @@ export default {
 	TRASH_POST_SUCCESS( action ) {
 		const { postId, postType } = action;
 
-			window.location.href = getWPAdminURL( 'edit.php', {
-				trashed: 1,
-				post_type: postType,
-				ids: postId,
-			} );
+		window.location.href = getWPAdminURL( 'edit.php', {
+			trashed: 1,
+			post_type: postType,
+			ids: postId,
+		} );
 	},
 	TRASH_POST_FAILURE( action, store ) {
 		const message = action.error.message && action.error.code !== 'unknown_error' ? action.error.message : __( 'Trashing failed' );
@@ -522,7 +522,7 @@ export default {
 		const dataPerLocation = reduce( action.metaBoxes, ( memo, isActive, location ) => {
 			if ( isActive ) {
 				memo[ location ] = jQuery( getMetaBoxContainer( location ) ).serialize();
-		}
+			}
 			return memo;
 		}, {} );
 		store.dispatch( setMetaBoxSavedData( dataPerLocation ) );

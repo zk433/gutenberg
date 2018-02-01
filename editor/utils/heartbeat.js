@@ -49,7 +49,7 @@ export function setupHeartbeat() {
 	 *
 	 * @since 1.9.0
 	 *
-	 * @returns {Object|bool} postData The autosaved post data to send, or false if no autosave is needed.
+	 * @returns {Object|boolean} postData The autosaved post data to send, or false if no autosave is needed.
 	 */
 	const save = function() {
 		// Bail early if autosaving is suspended or saving is blocked.

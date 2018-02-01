@@ -456,7 +456,19 @@ describe( 'effects', () => {
 				status: 'draft',
 			};
 
-			const autosave = {"autosave": {"content": {"raw": ""}, "id": 1, "status": "draft", "title": {"raw": "A History of Pork"}}, "type": "RESET_AUTOSAVE"};
+			const autosave = {
+				autosave: {
+					content: {
+						raw: '',
+					},
+					id: 1,
+					status: 'draft',
+					title: {
+						raw: 'A History of Pork',
+					},
+				},
+				type: 'RESET_AUTOSAVE',
+			};
 
 			const result = handler( { post, settings: {} } );
 
@@ -500,7 +512,19 @@ describe( 'effects', () => {
 				status: 'auto-draft',
 			};
 
-			const autosave = {"autosave": {"content": {"raw": ""}, "id": 1, "status": "auto-draft", "title": {"raw": "A History of Pork"}}, "type": "RESET_AUTOSAVE"};
+			const autosave = {
+				autosave: {
+					content: {
+						raw: '',
+					},
+					id: 1,
+					status: 'auto-draft',
+					title: {
+						raw: 'A History of Pork',
+					},
+				},
+				type: 'RESET_AUTOSAVE',
+			};
 
 			const result = handler( { post, settings: {} } );
 
@@ -546,7 +570,7 @@ describe( 'effects', () => {
 					{
 						id: 'a9691cf9-ecaa-42bd-a9ca-49587e817647',
 						title: 'My cool block',
-						content: '<!-- wp:core/test-block {"name":"Big Bird"} /-->',
+						content: '<!-- wp:core/test-block { "name":"Big Bird" } /-->',
 					},
 				] );
 
@@ -585,7 +609,7 @@ describe( 'effects', () => {
 				const promise = Promise.resolve( {
 					id,
 					title: 'My cool block',
-					content: '<!-- wp:core/test-block {"name":"Big Bird"} /-->',
+					content: '<!-- wp:core/test-block { "name":"Big Bird" } /-->',
 				} );
 
 				set( global, 'wp.api.models.Blocks', class {
@@ -666,7 +690,7 @@ describe( 'effects', () => {
 				} );
 
 				const reusableBlock = createReusableBlock( 'core/test-block', {
-						name: 'Big Bird',
+					name: 'Big Bird',
 				} );
 
 				const initialState = reducer( undefined, {} );
@@ -680,7 +704,7 @@ describe( 'effects', () => {
 
 				expect( modelAttributes ).toEqual( {
 					title: 'Untitled block',
-					content: '<!-- wp:test-block {\"name\":\"Big Bird\"} /-->',
+					content: '<!-- wp:test-block {\"name\":\"Big Bird\" } /-->',
 				} );
 				return promise.then( () => {
 					expect( dispatch ).toHaveBeenCalledWith( {
@@ -701,7 +725,7 @@ describe( 'effects', () => {
 				} );
 
 				const reusableBlock = createReusableBlock( 'core/test-block', {
-						name: 'Big Bird',
+					name: 'Big Bird',
 				} );
 
 				const initialState = reducer( undefined, {} );
@@ -742,7 +766,7 @@ describe( 'effects', () => {
 				const id = 123;
 
 				const associatedBlock = createBlock( 'core/block', {
-						ref: id,
+					ref: id,
 				} );
 
 				const actions = [
@@ -819,10 +843,10 @@ describe( 'effects', () => {
 
 			it( 'should convert a reusable block into a static block', () => {
 				const reusableBlock = createReusableBlock( 'core/test-block', {
-						name: 'Big Bird',
+					name: 'Big Bird',
 				} );
 				const staticBlock = createBlock( 'core/block', {
-						ref: reusableBlock.id,
+					ref: reusableBlock.id,
 				} );
 
 				const actions = [
@@ -851,7 +875,7 @@ describe( 'effects', () => {
 
 			it( 'should convert a static block into a reusable block', () => {
 				const staticBlock = createBlock( 'core/test-block', {
-						name: 'Big Bird',
+					name: 'Big Bird',
 				} );
 
 				const initialState = reducer( undefined, {} );
