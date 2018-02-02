@@ -471,9 +471,9 @@ export default {
 		speak( message, 'assertive' );
 	},
 	INITIALIZE_META_BOX_STATE( action, store ) {
-        if ( ! has( window, 'postboxes.add_postbox_toggles' ) ) {
-            return;
-        }
+		if ( ! has( window, 'postboxes.add_postbox_toggles' ) ) {
+			return;
+		}
 		// Allow toggling metaboxes panels
 		if ( some( action.metaBoxes ) ) {
 			window.postboxes.add_postbox_toggles( 'post' );
