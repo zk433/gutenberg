@@ -444,7 +444,6 @@ describe( 'effects', () => {
 			} );
 		} );
 
-
 		it( 'should return post reset action', () => {
 			const post = {
 				id: 1,
@@ -476,7 +475,7 @@ describe( 'effects', () => {
 			expect( result ).toEqual( [
 				resetPost( post ),
 				autosave,
-				resetPost( post )
+				resetPost( post ),
 			] );
 		} );
 
