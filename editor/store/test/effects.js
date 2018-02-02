@@ -444,6 +444,7 @@ describe( 'effects', () => {
 			} );
 		} );
 
+
 		it( 'should return post reset action', () => {
 			const post = {
 				id: 1,
@@ -475,6 +476,7 @@ describe( 'effects', () => {
 			expect( result ).toEqual( [
 				resetPost( post ),
 				autosave,
+				resetPost( post )
 			] );
 		} );
 
@@ -493,7 +495,7 @@ describe( 'effects', () => {
 
 			const result = handler( { post, settings: {} } );
 
-			expect( result ).toHaveLength( 3 );
+			expect( result ).toHaveLength( 4 );
 			expect( result ).toContainEqual( resetPost( post ) );
 			expect( result.some( ( { blocks } ) => {
 				return blocks && blocks[ 0 ].name === 'core/test-block';
@@ -529,10 +531,10 @@ describe( 'effects', () => {
 			const result = handler( { post, settings: {} } );
 
 			expect( result ).toEqual( [
-				setupNewPost( { title: 'A History of Pork' } ),
 				resetPost( post ),
 				autosave,
 				setupNewPost( { title: 'A History of Pork' } ),
+				resetPost( post ),
 			] );
 		} );
 	} );
@@ -704,7 +706,7 @@ describe( 'effects', () => {
 
 				expect( modelAttributes ).toEqual( {
 					title: 'Untitled block',
-					content: '<!-- wp:test-block {\"name\":\"Big Bird\" } /-->',
+					content: '<!-- wp:test-block {\"name\":\"Big Bird\"} /-->',
 				} );
 				return promise.then( () => {
 					expect( dispatch ).toHaveBeenCalledWith( {
