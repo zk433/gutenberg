@@ -124,6 +124,39 @@ add_action( 'wp_enqueue_scripts', 'gutenberg_ensure_wp_api_request', 20 );
 add_action( 'admin_enqueue_scripts', 'gutenberg_ensure_wp_api_request', 20 );
 
 /**
+ * Shims fix for apiRequest on sites configured to use plain permalinks.
+ *
+ * @see https://core.trac.wordpress.org/ticket/42382
+ *
+ * @param WP_Scripts $scripts WP_Scripts instance (passed by reference).
+ */
+function gutenberg_shim_fix_api_request_plain_permalinks( $scripts ) {
+	$api_request_fix = <<<JS
+( function( wp, wpApiSettings ) {
+	var buildAjaxOptions;
+
+	if ( 'string' !== typeof wpApiSettings.root ||
+			-1 === wpApiSettings.root.indexOf( '?' ) ) {
+		return;
+	}
+
+	buildAjaxOptions = wp.apiRequest.buildAjaxOptions;
+
+	wp.apiRequest.buildAjaxOptions = function( options ) {
+		if ( 'string' === typeof options.path ) {
+			options.path = options.path.replace( '?', '&' );
+		}
+
+		return buildAjaxOptions.call( wp.apiRequest, options );
+	};
+} )( window.wp, window.wpApiSettings );
+JS;
+
+	$scripts->add_inline_script( 'wp-api-request', $api_request_fix, 'after' );
+}
+add_action( 'wp_default_scripts', 'gutenberg_shim_fix_api_request_plain_permalinks' );
+
+/**
  * Disables wpautop behavior in classic editor when post contains blocks, to
  * prevent removep from invalidating paragraph blocks.
  *
