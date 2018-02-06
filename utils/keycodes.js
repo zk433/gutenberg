@@ -22,8 +22,8 @@ export const F10 = 121;
  * Check if the meta key and the given character are presssed.
  *
  * @param  {KeyboardEvent} event     The event object.
- * @param  {String}        character The character to check.
- * @return {Boolean}                 True if the combination is pressed, false if not.
+ * @param  {string}        character The character to check.
+ * @return {boolean}                 True if the combination is pressed, false if not.
  */
 export function isMeta( event, character ) {
 	const meta = isMac ? 'Meta' : 'Ctrl';

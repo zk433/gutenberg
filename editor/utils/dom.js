@@ -348,7 +348,7 @@ export function documentHasSelection() {
  *
  * @param {Element} element The element to check.
  *
- * @returns {Boolean} True if fully selected, false if not.
+ * @return {boolean} True if fully selected, false if not.
  */
 export function isFullySelected( element ) {
 	if ( includes( [ 'INPUT', 'TEXTAREA' ], element.nodeName ) ) {
