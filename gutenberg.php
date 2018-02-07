@@ -77,7 +77,6 @@ function gutenberg_menu() {
 		);
 	}
 }
-add_action( 'admin_menu', 'gutenberg_menu' );
 
 /**
  * Display a version notice and deactivate the Gutenberg plugin.
@@ -132,6 +131,11 @@ function gutenberg_pre_init() {
 		add_action( 'load-post-new.php', 'gutenberg_intercept_post_new' );
 		return;
 	}
+
+	add_action( 'admin_init', 'gutenberg_add_edit_link_filters' );
+	add_action( 'admin_init', 'gutenberg_redirect_demo' );
+	add_action( 'admin_print_scripts-edit.php', 'gutenberg_replace_default_add_new_button' );
+	add_action( 'admin_menu', 'gutenberg_menu' );
 
 	add_filter( 'replace_editor', 'gutenberg_init', 10, 2 );
 }
@@ -328,7 +332,6 @@ function gutenberg_redirect_demo() {
 		exit;
 	}
 }
-add_action( 'admin_init', 'gutenberg_redirect_demo' );
 
 /**
  * Adds the filters to register additional links for the Gutenberg editor in
@@ -342,7 +345,6 @@ function gutenberg_add_edit_link_filters() {
 	// For non-hierarchical post types.
 	add_filter( 'post_row_actions', 'gutenberg_add_edit_link', 10, 2 );
 }
-add_action( 'admin_init', 'gutenberg_add_edit_link_filters' );
 
 /**
  * Registers an additional link in the post/page screens to edit any post/page in
@@ -513,7 +515,6 @@ function gutenberg_replace_default_add_new_button() {
 	</script>
 	<?php
 }
-add_action( 'admin_print_scripts-edit.php', 'gutenberg_replace_default_add_new_button' );
 
 /**
  * Adds the gutenberg-editor-page class to the body tag on the Gutenberg page.
