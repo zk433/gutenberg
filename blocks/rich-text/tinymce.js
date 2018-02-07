@@ -17,6 +17,10 @@ import { diffAriaProps, pickAriaProps } from './aria';
 
 export default class TinyMCE extends Component {
 	componentDidMount() {
+		if ( this.props.onMount ) {
+			this.props.onMount( this.editorNode );
+		}
+
 		this.initialize();
 	}
 

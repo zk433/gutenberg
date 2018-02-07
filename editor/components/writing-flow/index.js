@@ -261,7 +261,12 @@ class WritingFlow extends Component {
 			const blockContainer = this.container.querySelector( `[data-block="${ this.props.selectedBlock.uid }"]` );
 			if ( blockContainer && ! blockContainer.contains( document.activeElement ) ) {
 				const target = this.getInnerTabbable( blockContainer, this.props.initialPosition === -1 );
-				target.focus();
+
+				// If there is a contenteditable element, it will move focus by itself.
+				if ( ! target.querySelector( '[contenteditable="true"]' ) ) {
+					target.focus();
+				}
+
 				if ( this.props.initialPosition === -1 ) {
 					// Special casing RichText components because the two functions at the bottom are not working as expected.
 					// When merging two sibling paragraph blocks (backspacing) the focus is not moved to the right position.
