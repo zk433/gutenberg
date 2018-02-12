@@ -33,6 +33,7 @@ import {
 	convertBlockToStatic,
 	convertBlockToReusable,
 	selectBlock,
+	resetAutosave,
 } from '../../store/actions';
 import reducer from '../reducer';
 import effects from '../effects';
@@ -474,8 +475,7 @@ describe( 'effects', () => {
 
 			expect( result ).toEqual( [
 				resetPost( post ),
-				autosave,
-				resetPost( post ),
+				resetAutosave( post ),
 			] );
 		} );
 
@@ -494,7 +494,7 @@ describe( 'effects', () => {
 
 			const result = handler( { post, settings: {} } );
 
-			expect( result ).toHaveLength( 4 );
+			expect( result ).toHaveLength( 3 );
 			expect( result ).toContainEqual( resetPost( post ) );
 			expect( result.some( ( { blocks } ) => {
 				return blocks && blocks[ 0 ].name === 'core/test-block';
