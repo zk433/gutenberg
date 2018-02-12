@@ -14,14 +14,14 @@ import { __ } from '@wordpress/i18n';
  */
 import { getAutosaveMessage } from '../../../../editor/store/selectors';
 
-function AutosaveMessage( { message } ) {
-	if ( ! message ) {
+function AutosaveMessage( { children } ) {
+	if ( ! children ) {
 		return null;
 	}
 	return (
 		<PanelRow>
 			<span>{ __( 'Autosave' ) }</span>
-			<div>{ message }</div>
+			<div>{ children }</div>
 		</PanelRow>
 	);
 }
@@ -29,7 +29,7 @@ function AutosaveMessage( { message } ) {
 export default connect(
 	( state ) => {
 		return {
-			message: getAutosaveMessage( state ),
+			children: getAutosaveMessage( state ),
 		};
 	}
 )( AutosaveMessage );
