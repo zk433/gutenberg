@@ -12,7 +12,7 @@ import { __ } from '@wordpress/i18n';
 /**
  * Internal dependencies
  */
-import { getAutosaveMessage } from '../../../../editor/store/selectors';
+import { getAutosaveMessage } from '../../../store/selectors';
 
 function AutosaveMessage( { children } ) {
 	if ( ! children ) {

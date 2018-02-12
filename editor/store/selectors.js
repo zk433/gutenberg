@@ -146,17 +146,6 @@ export function isPostAutosaveDirty( state ) {
 }
 
 /**
- * Returns the autosave status message.
- *
- * @param  {Object}  state Global application state
- *
- * @return {boolean} Whether unsaved values exist.
- */
-export function getAutosaveMessage( state ) {
-	return state.autosave.message;
-}
-
-/**
  * Returns true if there are no unsaved values for the current edit session and if
  * the currently edited post is new (and has never been saved before).
  *

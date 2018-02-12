@@ -123,3 +123,14 @@ export function hasFixedToolbar( state ) {
 export function isFeatureActive( state, feature ) {
 	return !! state.preferences.features[ feature ];
 }
+
+/**
+ * Returns the autosave status message.
+ *
+ * @param  {Object}  state Global application state
+ *
+ * @return {boolean} Whether unsaved values exist.
+ */
+export function getAutosaveMessage( state ) {
+	return state.autosave.message;
+}
