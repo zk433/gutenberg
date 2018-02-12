@@ -1022,7 +1022,7 @@ export function isAutosavingPost( state ) {
  * @return {boolean}       Whether the network is connected
  */
 export function isNetworkConnected( state ) {
-	return !! state.networkIsConnected;
+	return state.networkIsConnected;
 }
 
 /**
