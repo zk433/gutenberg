@@ -45,8 +45,8 @@ describe( 'select', () => {
 
 		registerSelectors( 'reducer', { selector } );
 
-		expect( select( 'reducer', 'selector' ) ).toEqual( 'result' );
-		expect( selector ).toBeCalledWith( store.getState() );
+		expect( select( 'reducer', 'selector', 'arg' ) ).toEqual( 'result' );
+		expect( selector ).toBeCalledWith( store.getState(), 'arg' );
 		expect( console ).toHaveWarned();
 	} );
 } );
