@@ -56,7 +56,7 @@ export function resetAutosave( autosaveData ) {
  *
  * @param  {Object} message Post object
  *
- * @returns {Object} Action object.
+ * @return {Object} Action object.
  */
 export function updateAutosaveStatusMessage( message ) {
 	return {
@@ -308,7 +308,7 @@ export function autosave() {
  * Returns an action object used to toggle the autosave action status.
  *
  * @param  {boolean} isAutosaving Is the editor autosaving?
- * @returns {Object}            Action object
+ * @return {Object}            Action object
  */
 export function toggleAutosave( isAutosaving ) {
 	return {
@@ -321,7 +321,7 @@ export function toggleAutosave( isAutosaving ) {
  * Returns an action to show the autosave notice.
  *
  * @param  {boolean} autosaveStatus Autosave status and data including a link to the autosave.
- * @returns {Object}              Action object
+ * @return {Object}              Action object
  */
 export function showAutosaveNotice( autosaveStatus ) {
 	return {
@@ -334,7 +334,7 @@ export function showAutosaveNotice( autosaveStatus ) {
  * Returns an action object used to toggle the connection status.
  *
  * @param  {boolean} status Is the network connection up?
- * @returns {Object}      Action object
+ * @return {Object}      Action object
  */
 export function toggleNetworkIsConnected( status ) {
 	return {
@@ -346,7 +346,7 @@ export function toggleNetworkIsConnected( status ) {
 /**
  * Returns an action to show the disconnection notice.
  *
- * @returns {Object}              Action object
+ * @return {Object}              Action object
  */
 export function showDisconnectionNotice() {
 	return {

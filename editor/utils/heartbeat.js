@@ -47,9 +47,7 @@ export function setupHeartbeat() {
 	/**
 	 * Autosave 'save' function that pulls content from Gutenberg state. Based on `wp.autosave.save`.
 	 *
-	 * @since 1.9.0
-	 *
-	 * @returns {Object|boolean} postData The autosaved post data to send, or false if no autosave is needed.
+	 * @return {Object|boolean} postData The autosaved post data to send, or false if no autosave is needed.
 	 */
 	const save = function() {
 		// Bail early if autosaving is suspended or saving is blocked.
@@ -133,9 +131,7 @@ export function setupHeartbeat() {
 	/**
 	 * Disable buttons and throw a notice when the connection is lost.
 	 *
-	 * @since 1.9.0
-	 *
-	 * @returns {void}
+	 * @return {void}
 	 */
 	$document.on( 'heartbeat-connection-lost.autosave', function( event, error, status ) {
 		// When connection is lost, keep user from submitting changes.
@@ -148,9 +144,7 @@ export function setupHeartbeat() {
 	/**
 	 * Enable buttons when the connection is restored.
 	 *
-	 * @since 1.9.0
-	 *
-	 * @returns {void}
+	 * @return {void}
 	 */
 	$document.on( 'heartbeat-connection-restored.autosave', function() {
 		dispatch( removeNotice( DISCONNECTION_NOTICE_ID ) );

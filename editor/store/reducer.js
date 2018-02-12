@@ -108,7 +108,7 @@ function getFlattenedBlocks( blocks ) {
  * @param {Object} state  Current state.
  * @param {Object} action Dispatched action.
  *
- * @returns {Object} Updated state.
+ * @return {Object} Updated state.
  */
 export const editor = flow( [
 	combineReducers,
@@ -584,7 +584,7 @@ export function blocksMode( state = {}, action ) {
  *
  * @param  {Object} state  Current state
  * @param  {Object} action Dispatched action
- * @returns {Object}        Updated state
+ * @return {Object}        Updated state
  */
 export function currentlyAutosaving( state = false, action ) {
 	switch ( action.type ) {
@@ -601,7 +601,7 @@ export function currentlyAutosaving( state = false, action ) {
  *
  * @param  {Object} state  Current state
  * @param  {Object} action Dispatched action
- * @returns {Object}        Updated state
+ * @return {Object}        Updated state
  */
 export const autosave = withChangeDetection( function( state = { message: '', autosave: false }, action ) {
 	switch ( action.type ) {
@@ -625,7 +625,7 @@ export const autosave = withChangeDetection( function( state = { message: '', au
  *
  * @param  {Object} state  Current state
  * @param  {Object} action Dispatched action
- * @returns {Object}        Updated state
+ * @return {Object}        Updated state
  */
 export function networkIsConnected( state = true, action ) {
 	switch ( action.type ) {

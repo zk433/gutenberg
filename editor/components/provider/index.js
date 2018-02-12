@@ -21,7 +21,7 @@ import {
  */
 import { setupEditor, undo, showAutosaveNotice, initializeMetaBoxState } from '../../store/actions';
 import store from '../../store';
-import { setupHeartbeat } from '../../utils/heartbeat'
+import { setupHeartbeat } from '../../utils/heartbeat';
 
 /**
  * The default editor settings

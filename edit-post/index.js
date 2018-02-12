@@ -80,7 +80,7 @@ export function reinitializeEditor( target, settings ) {
  * @param {string}  id       Unique identifier for editor instance.
  * @param {Object}  post     API entity for post to edit.
  * @param {?Object} settings Editor settings object.
- * @parap {?Object} autosave The post autosave if one exists.
+ * @param {?Object} autosave The post autosave if one exists.
  *
  * @return {Object} Editor interface.
  */

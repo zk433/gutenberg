@@ -65,7 +65,7 @@ export function getMetaBox( state, location ) {
  * Returns true if the post is using Meta Boxes
  *
  * @param  {Object} state Global application state
- * @returns {boolean}     Whether there are metaboxes or not.
+ * @return {boolean}     Whether there are metaboxes or not.
  */
 export const hasMetaBoxes = createSelector(
 	( state ) => {
@@ -139,7 +139,7 @@ export function isEditedPostDirty( state ) {
  *
  * @param  {Object}  state Global application state
  *
- * @returns {boolean} Whether unsaved values exist.
+ * @return {boolean} Whether unsaved values exist.
  */
 export function isPostAutosaveDirty( state ) {
 	return state.autosave.isDirty;
@@ -150,7 +150,7 @@ export function isPostAutosaveDirty( state ) {
  *
  * @param  {Object}  state Global application state
  *
- * @returns {boolean} Whether unsaved values exist.
+ * @return {boolean} Whether unsaved values exist.
  */
 export function getAutosaveMessage( state ) {
 	return state.autosave.message;
@@ -1009,7 +1009,7 @@ export function didPostSaveRequestFail( state ) {
  * Is the post autosaving?
  *
  * @param  {Object}  state Global application state
- * @returns {boolean}       Whether the post is autosaving
+ * @return {boolean}       Whether the post is autosaving
  */
 export function isAutosavingPost( state ) {
 	return !! state.currentlyAutosaving;
@@ -1019,7 +1019,7 @@ export function isAutosavingPost( state ) {
  * Is the netowork connected?
  *
  * @param  {Object}  state Global application state
- * @returns {boolean}       Whether the network is connected
+ * @return {boolean}       Whether the network is connected
  */
 export function isNetworkConnected( state ) {
 	return !! state.networkIsConnected;
