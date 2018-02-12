@@ -46,7 +46,7 @@ This function allows calling any registered selector. Given a module's key, a se
 #### Example:
 
 ```js
-wp.data.select( 'myPlugin', 'getTitle' ); // Returns "My post title"
+wp.data.select( 'myPlugin' ).getTitle(); // Returns "My post title"
 ```
 
 ### `wp.data.query( mapSelectorsToProps: function )( WrappedComponent: Component )`
@@ -58,7 +58,7 @@ const Component = ( { title } ) => <div>{ title }</div>;
 
 wp.data.query( select => {
 	return {
-		title: select( 'myPlugin', 'getTitle' ),
+		title: select( 'myPlugin' ).getTitle(),
 	};
 } )( Component );
 ```
@@ -71,7 +71,7 @@ Function used to subscribe to data changes. The listener function is called each
 // Subscribe.
 const unsubscribe = wp.data.subscribe( () => {
 	const data = {
-		slug: wp.data.select( 'core/editor', 'getEditedPostSlug' ),
+		slug: wp.data.select( 'core/editor' ).getEditedPostSlug(),
 	};
 
 	console.log( 'data changed', data );
