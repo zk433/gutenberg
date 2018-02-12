@@ -80,16 +80,17 @@ export function reinitializeEditor( target, settings ) {
  * @param {string}  id       Unique identifier for editor instance.
  * @param {Object}  post     API entity for post to edit.
  * @param {?Object} settings Editor settings object.
+ * @parap {?Object} autosave The post autosave if one exists.
  *
  * @return {Object} Editor interface.
  */
-export function initializeEditor( id, post, settings ) {
+export function initializeEditor( id, post, settings, autosave ) {
 	const target = document.getElementById( id );
 	const reboot = reinitializeEditor.bind( null, target, settings );
 	const ReduxProvider = createProvider( 'edit-post' );
 
 	const provider = render(
-		<EditorProvider settings={ settings } post={ post }>
+		<EditorProvider settings={ settings } post={ post } autosave={ autosave }>
 			<ErrorBoundary onError={ reboot }>
 				<ReduxProvider store={ store }>
 					<Layout />

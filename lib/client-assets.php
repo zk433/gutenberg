@@ -780,6 +780,39 @@ function gutenberg_editor_scripts_and_styles( $hook ) {
 		wp_die( $post_to_edit->get_error_message() );
 	}
 
+	// Add autosave data if it is newer and changed.
+	$autosave      = wp_get_post_autosave( $post->ID );
+	$show_autosave = false;
+
+	// Is the autosave newer than the post?
+	if (
+		$autosave &&
+		mysql2date( 'U', $autosave->post_modified_gmt, false ) > mysql2date( 'U', $post->post_modified_gmt, false )
+	) {
+		foreach ( _wp_post_revision_fields( $post ) as $autosave_field => $_autosave_field ) {
+			if ( normalize_whitespace( $autosave->$autosave_field ) != normalize_whitespace( $post->$autosave_field ) ) {
+				$show_autosave = true;
+				break;
+			}
+		}
+	}
+
+	// If this autosave isn't newer and different from the current post, remove.
+	if ( $autosave && ! $show_autosave ) {
+		wp_delete_post_revision( $autosave->ID );
+	}
+
+	if ( $show_autosave ) {
+		wp_localize_script(
+			'wp-editor',
+			'_wpAutosave',
+			array(
+				'id'        => $autosave->ID,
+				'edit_link' => add_query_arg( 'gutenberg', true, get_edit_post_link( $autosave->ID ) ),
+			)
+		);
+	}
+
 	// Set initial title to empty string for auto draft for duration of edit.
 	// Otherwise, title defaults to and displays as "Auto Draft".
 	$is_new_post = 'auto-draft' === $post_to_edit['status'];
@@ -897,7 +930,7 @@ function gutenberg_editor_scripts_and_styles( $hook ) {
 	$script .= <<<JS
 		window._wpLoadGutenbergEditor = wp.api.init().then( function() {
 			wp.blocks.registerCoreBlocks();
-			return wp.editPost.initializeEditor( 'editor', window._wpGutenbergPost, editorSettings );
+			return wp.editPost.initializeEditor( 'editor', window._wpGutenbergPost, editorSettings, window._wpAutosave );
 		} );
 JS;
 	$script .= '} )();';
