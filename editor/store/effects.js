@@ -28,7 +28,6 @@ import {
 	resetPost,
 	setupNewPost,
 	resetBlocks,
-	focusBlock,
 	replaceBlocks,
 	createSuccessNotice,
 	createErrorNotice,
@@ -43,6 +42,7 @@ import {
 	insertBlock,
 	resetAutosave,
 	setMetaBoxSavedData,
+	selectBlock,
 } from './actions';
 import {
 	getCurrentPost,
@@ -261,7 +261,7 @@ export default {
 
 		// Only focus the previous block if it's not mergeable
 		if ( ! blockType.merge ) {
-			dispatch( focusBlock( blockA.uid ) );
+			dispatch( selectBlock( blockA.uid ) );
 			return;
 		}
 
@@ -282,7 +282,7 @@ export default {
 			blocksWithTheSameType[ 0 ].attributes
 		);
 
-		dispatch( focusBlock( blockA.uid, { offset: -1 } ) );
+		dispatch( selectBlock( blockA.uid, -1 ) );
 		dispatch( replaceBlocks(
 			[ blockA.uid, blockB.uid ],
 			[
@@ -355,10 +355,6 @@ export default {
 				title: post.title.raw,
 			} ) );
 		}
-
-		// Resetting post should occur after blocks have been reset, since it's
-		// the post reset that restarts history (used in dirty detection).
-		effects.push( resetPost( post ) );
 
 		return effects;
 	},
@@ -502,13 +498,19 @@ export default {
 
 		const oldBlock = getBlock( getState(), action.uid );
 		const reusableBlock = createReusableBlock( oldBlock.name, oldBlock.attributes );
-		const newBlock = createBlock( 'core/block', { ref: reusableBlock.id } );
+		const newBlock = createBlock( 'core/block', {
+			ref: reusableBlock.id,
+			layout: oldBlock.attributes.layout,
+		} );
 		dispatch( updateReusableBlock( reusableBlock.id, reusableBlock ) );
 		dispatch( saveReusableBlock( reusableBlock.id ) );
 		dispatch( replaceBlocks( [ oldBlock.uid ], [ newBlock ] ) );
 	},
-	APPEND_DEFAULT_BLOCK() {
-		return insertBlock( createBlock( getDefaultBlockName() ) );
+	APPEND_DEFAULT_BLOCK( action ) {
+		const { attributes, rootUID } = action;
+		const block = createBlock( getDefaultBlockName(), attributes );
+
+		return insertBlock( block, undefined, rootUID );
 	},
 	CREATE_NOTICE( { notice: { content, spokenMessage } } ) {
 		const message = spokenMessage || content;
