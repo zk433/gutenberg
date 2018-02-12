@@ -338,7 +338,7 @@ export function showAutosaveNotice( autosaveStatus ) {
  */
 export function toggleNetworkIsConnected( status ) {
 	return {
-		type: 'IS_CONNECTED',
+		type: 'TOGGLE_CONNECTED',
 		status,
 	};
 }

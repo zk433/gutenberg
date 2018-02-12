@@ -629,7 +629,7 @@ export const autosave = withChangeDetection( function( state = { message: '', au
  */
 export function networkIsConnected( state = true, action ) {
 	switch ( action.type ) {
-		case 'IS_CONNECTED':
+		case 'TOGGLE_CONNECTED':
 			const { status } = action;
 			return status;
 	}
