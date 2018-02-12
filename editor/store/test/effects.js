@@ -457,20 +457,6 @@ describe( 'effects', () => {
 				status: 'draft',
 			};
 
-			const autosave = {
-				autosave: {
-					content: {
-						raw: '',
-					},
-					id: 1,
-					status: 'draft',
-					title: {
-						raw: 'A History of Pork',
-					},
-				},
-				type: 'RESET_AUTOSAVE',
-			};
-
 			const result = handler( { post, settings: {} } );
 
 			expect( result ).toEqual( [
