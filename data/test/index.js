@@ -38,6 +38,17 @@ describe( 'select', () => {
 		expect( select( 'reducer1' ).selector2() ).toEqual( 'result2' );
 		expect( selector2 ).toBeCalledWith( store.getState() );
 	} );
+
+	it( 'provides upgrade path for deprecated usage', () => {
+		const store = registerReducer( 'reducer', () => 'state' );
+		const selector = jest.fn( () => 'result' );
+
+		registerSelectors( 'reducer', { selector } );
+
+		expect( select( 'reducer', 'selector' ) ).toEqual( 'result' );
+		expect( selector ).toBeCalledWith( store.getState() );
+		expect( console ).toHaveWarned();
+	} );
 } );
 
 describe( 'query', () => {
