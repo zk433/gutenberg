@@ -764,13 +764,6 @@ function gutenberg_editor_scripts_and_styles( $hook ) {
 
 	gutenberg_extend_wp_api_backbone_client();
 
-	wp_localize_script( 'wp-editor', 'wpEditorL10n', array(
-		'tinymce' => array(
-			'baseURL'  => includes_url( 'js/tinymce' ),
-			'suffix'   => SCRIPT_DEBUG ? '' : '.min',
-			'settings' => $tinymce_settings,
-		),
-	) );
 	wp_enqueue_script( 'heartbeat' );
 	wp_enqueue_script( 'autosave' );
 	wp_enqueue_script( 'wp-edit-post' );
