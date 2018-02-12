@@ -21,6 +21,7 @@ import {
  */
 import { setupEditor, undo, showAutosaveNotice, initializeMetaBoxState } from '../../store/actions';
 import store from '../../store';
+import { setupHeartbeat } from '../../utils/heartbeat'
 
 /**
  * The default editor settings
@@ -75,6 +76,9 @@ class EditorProvider extends Component {
 		if ( props.autosave ) {
 			this.store.dispatch( showAutosaveNotice( props.autosave ) );
 		}
+
+		// Initialize heartbeat autosaves.
+		setupHeartbeat();
 	}
 
 	getChildContext() {
