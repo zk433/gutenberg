@@ -47,8 +47,8 @@ const {
 	getMultiSelectedBlocksEndUid,
 	getBlockOrder,
 	getBlockIndex,
-	getPreviousBlock,
-	getNextBlock,
+	getPreviousBlockUid,
+	getNextBlockUid,
 	isBlockSelected,
 	isBlockWithinSelection,
 	isBlockMultiSelected,
@@ -1371,15 +1371,11 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( 'getPreviousBlock', () => {
+	describe( 'getPreviousBlockUid', () => {
 		it( 'should return the previous block', () => {
 			const state = {
 				editor: {
 					present: {
-						blocksByUid: {
-							23: { uid: 23, name: 'core/heading', attributes: {} },
-							123: { uid: 123, name: 'core/paragraph', attributes: {} },
-						},
 						blockOrder: {
 							'': [ 123, 23 ],
 						},
@@ -1387,24 +1383,13 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( getPreviousBlock( state, 23 ) ).toEqual( {
-				uid: 123,
-				name: 'core/paragraph',
-				attributes: {},
-				innerBlocks: [],
-			} );
+			expect( getPreviousBlockUid( state, 23 ) ).toEqual( 123 );
 		} );
 
 		it( 'should return the previous block (nested context)', () => {
 			const state = {
 				editor: {
 					present: {
-						blocksByUid: {
-							23: { uid: 23, name: 'core/heading', attributes: {} },
-							123: { uid: 123, name: 'core/paragraph', attributes: {} },
-							56: { uid: 56, name: 'core/heading', attributes: {} },
-							456: { uid: 456, name: 'core/paragraph', attributes: {} },
-						},
 						blockOrder: {
 							'': [ 123, 23 ],
 							123: [ 456, 56 ],
@@ -1413,22 +1398,13 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( getPreviousBlock( state, 56, '123' ) ).toEqual( {
-				uid: 456,
-				name: 'core/paragraph',
-				attributes: {},
-				innerBlocks: [],
-			} );
+			expect( getPreviousBlockUid( state, 56, '123' ) ).toEqual( 456 );
 		} );
 
 		it( 'should return null for the first block', () => {
 			const state = {
 				editor: {
 					present: {
-						blocksByUid: {
-							23: { uid: 23, name: 'core/heading', attributes: {} },
-							123: { uid: 123, name: 'core/paragraph', attributes: {} },
-						},
 						blockOrder: {
 							'': [ 123, 23 ],
 						},
@@ -1436,19 +1412,13 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( getPreviousBlock( state, 123 ) ).toBeNull();
+			expect( getPreviousBlockUid( state, 123 ) ).toBeNull();
 		} );
 
 		it( 'should return null for the first block (nested context)', () => {
 			const state = {
 				editor: {
 					present: {
-						blocksByUid: {
-							23: { uid: 23, name: 'core/heading', attributes: {} },
-							123: { uid: 123, name: 'core/paragraph', attributes: {} },
-							56: { uid: 56, name: 'core/heading', attributes: {} },
-							456: { uid: 456, name: 'core/paragraph', attributes: {} },
-						},
 						blockOrder: {
 							'': [ 123, 23 ],
 							123: [ 456, 56 ],
@@ -1457,19 +1427,15 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( getPreviousBlock( state, 456, '123' ) ).toBeNull();
+			expect( getPreviousBlockUid( state, 456, '123' ) ).toBeNull();
 		} );
 	} );
 
-	describe( 'getNextBlock', () => {
+	describe( 'getNextBlockUid', () => {
 		it( 'should return the following block', () => {
 			const state = {
 				editor: {
 					present: {
-						blocksByUid: {
-							23: { uid: 23, name: 'core/heading', attributes: {} },
-							123: { uid: 123, name: 'core/paragraph', attributes: {} },
-						},
 						blockOrder: {
 							'': [ 123, 23 ],
 						},
@@ -1477,24 +1443,13 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( getNextBlock( state, 123 ) ).toEqual( {
-				uid: 23,
-				name: 'core/heading',
-				attributes: {},
-				innerBlocks: [],
-			} );
+			expect( getNextBlockUid( state, 123 ) ).toEqual( 23 );
 		} );
 
 		it( 'should return the following block (nested context)', () => {
 			const state = {
 				editor: {
 					present: {
-						blocksByUid: {
-							23: { uid: 23, name: 'core/heading', attributes: {} },
-							123: { uid: 123, name: 'core/paragraph', attributes: {} },
-							56: { uid: 56, name: 'core/heading', attributes: {} },
-							456: { uid: 456, name: 'core/paragraph', attributes: {} },
-						},
 						blockOrder: {
 							'': [ 123, 23 ],
 							123: [ 456, 56 ],
@@ -1503,22 +1458,13 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( getNextBlock( state, 456, '123' ) ).toEqual( {
-				uid: 56,
-				name: 'core/heading',
-				attributes: {},
-				innerBlocks: [],
-			} );
+			expect( getNextBlockUid( state, 456, '123' ) ).toEqual( 56 );
 		} );
 
 		it( 'should return null for the last block', () => {
 			const state = {
 				editor: {
 					present: {
-						blocksByUid: {
-							23: { uid: 23, name: 'core/heading', attributes: {} },
-							123: { uid: 123, name: 'core/paragraph', attributes: {} },
-						},
 						blockOrder: {
 							'': [ 123, 23 ],
 						},
@@ -1526,19 +1472,13 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( getNextBlock( state, 23 ) ).toBeNull();
+			expect( getNextBlockUid( state, 23 ) ).toBeNull();
 		} );
 
 		it( 'should return null for the last block (nested context)', () => {
 			const state = {
 				editor: {
 					present: {
-						blocksByUid: {
-							23: { uid: 23, name: 'core/heading', attributes: {} },
-							123: { uid: 123, name: 'core/paragraph', attributes: {} },
-							56: { uid: 56, name: 'core/heading', attributes: {} },
-							456: { uid: 456, name: 'core/paragraph', attributes: {} },
-						},
 						blockOrder: {
 							'': [ 123, 23 ],
 							123: [ 456, 56 ],
@@ -1547,7 +1487,7 @@ describe( 'selectors', () => {
 				},
 			};
 
-			expect( getNextBlock( state, 56, '123' ) ).toBeNull();
+			expect( getNextBlockUid( state, 56, '123' ) ).toBeNull();
 		} );
 	} );
 
