@@ -74,7 +74,7 @@ export { Fragment };
 /**
  * Creates a context object containing two components: a provider and consumer.
  *
- * @param {object} defaultValue Data stored in the context.
+ * @param {object} defaultValue A default data stored in the context.
  *
  * @return {Object} Context object.
  */

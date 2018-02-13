@@ -19,13 +19,20 @@ import {
 } from '@wordpress/components';
 import { Component } from '@wordpress/element';
 
-export default function InspectorControls( { children } ) {
+/**
+ * Internal dependencies
+ */
+import { withEditBlockContextConsumer } from '../block-edit/context';
+
+export function InspectorControls( { children } ) {
 	return (
 		<Fill name="Inspector.Controls">
 			{ children }
 		</Fill>
 	);
 }
+
+export default withEditBlockContextConsumer( InspectorControls );
 
 const withDeprecation = ( componentName ) => ( OriginalComponent ) => {
 	class WrappedComponent extends Component {

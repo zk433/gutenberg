@@ -105,60 +105,56 @@ class ParagraphBlock extends Component {
 		const className = dropCap ? 'has-drop-cap' : null;
 
 		return [
-			isSelected && (
-				<BlockControls key="controls">
-					<AlignmentToolbar
-						value={ align }
-						onChange={ ( nextAlign ) => {
-							setAttributes( { align: nextAlign } );
-						} }
+			<BlockControls key="controls">
+				<AlignmentToolbar
+					value={ align }
+					onChange={ ( nextAlign ) => {
+						setAttributes( { align: nextAlign } );
+					} }
+				/>
+			</BlockControls>,
+			<InspectorControls key="inspector">
+				<PanelBody title={ __( 'Text Settings' ) }>
+					<ToggleControl
+						label={ __( 'Drop Cap' ) }
+						checked={ !! dropCap }
+						onChange={ this.toggleDropCap }
 					/>
-				</BlockControls>
-			),
-			isSelected && (
-				<InspectorControls key="inspector">
-					<PanelBody title={ __( 'Text Settings' ) }>
-						<ToggleControl
-							label={ __( 'Drop Cap' ) }
-							checked={ !! dropCap }
-							onChange={ this.toggleDropCap }
-						/>
-						<RangeControl
-							label={ __( 'Font Size' ) }
-							value={ fontSize || '' }
-							onChange={ ( value ) => setAttributes( { fontSize: value } ) }
-							min={ 10 }
-							max={ 200 }
-							beforeIcon="editor-textcolor"
-							allowReset
-						/>
-					</PanelBody>
-					<PanelColor title={ __( 'Background Color' ) } colorValue={ backgroundColor } initialOpen={ false }>
-						<ColorPalette
-							value={ backgroundColor }
-							onChange={ ( colorValue ) => setAttributes( { backgroundColor: colorValue } ) }
-						/>
-					</PanelColor>
-					<PanelColor title={ __( 'Text Color' ) } colorValue={ textColor } initialOpen={ false }>
-						<ColorPalette
-							value={ textColor }
-							onChange={ ( colorValue ) => setAttributes( { textColor: colorValue } ) }
-						/>
-					</PanelColor>
-					{ this.nodeRef && <ContrastCheckerWithFallbackStyles
-						node={ this.nodeRef }
-						textColor={ textColor }
-						backgroundColor={ backgroundColor }
-						isLargeText={ fontSize >= 18 }
-					/> }
-					<PanelBody title={ __( 'Block Alignment' ) }>
-						<BlockAlignmentToolbar
-							value={ width }
-							onChange={ ( nextWidth ) => setAttributes( { width: nextWidth } ) }
-						/>
-					</PanelBody>
-				</InspectorControls>
-			),
+					<RangeControl
+						label={ __( 'Font Size' ) }
+						value={ fontSize || '' }
+						onChange={ ( value ) => setAttributes( { fontSize: value } ) }
+						min={ 10 }
+						max={ 200 }
+						beforeIcon="editor-textcolor"
+						allowReset
+					/>
+				</PanelBody>
+				<PanelColor title={ __( 'Background Color' ) } colorValue={ backgroundColor } initialOpen={ false }>
+					<ColorPalette
+						value={ backgroundColor }
+						onChange={ ( colorValue ) => setAttributes( { backgroundColor: colorValue } ) }
+					/>
+				</PanelColor>
+				<PanelColor title={ __( 'Text Color' ) } colorValue={ textColor } initialOpen={ false }>
+					<ColorPalette
+						value={ textColor }
+						onChange={ ( colorValue ) => setAttributes( { textColor: colorValue } ) }
+					/>
+				</PanelColor>
+				{ this.nodeRef && <ContrastCheckerWithFallbackStyles
+					node={ this.nodeRef }
+					textColor={ textColor }
+					backgroundColor={ backgroundColor }
+					isLargeText={ fontSize >= 18 }
+				/> }
+				<PanelBody title={ __( 'Block Alignment' ) }>
+					<BlockAlignmentToolbar
+						value={ width }
+						onChange={ ( nextWidth ) => setAttributes( { width: nextWidth } ) }
+					/>
+				</PanelBody>
+			</InspectorControls>,
 			<div key="editable" ref={ this.bindRef }>
 				<Autocomplete completers={ [
 					blockAutocompleter( { onReplace } ),

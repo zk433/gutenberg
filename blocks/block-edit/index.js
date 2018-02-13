@@ -8,6 +8,7 @@ import { noop } from 'lodash';
  * WordPress dependencies
  */
 import { withFilters } from '@wordpress/components';
+import { compose } from '@wordpress/element';
 
 /**
  * Internal dependencies
@@ -17,6 +18,7 @@ import {
 	getBlockDefaultClassname,
 	hasBlockSupport,
 } from '../api';
+import { withEditBlockContextProvider } from './context';
 
 export function BlockEdit( props ) {
 	const { name, attributes = {} } = props;
@@ -49,4 +51,7 @@ export function BlockEdit( props ) {
 	);
 }
 
-export default withFilters( 'blocks.BlockEdit' )( BlockEdit );
+export default compose(
+	withEditBlockContextProvider,
+	withFilters( 'blocks.BlockEdit' ),
+)( BlockEdit );
