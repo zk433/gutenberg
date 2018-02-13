@@ -289,20 +289,20 @@ export class BlockListBlock extends Component {
 	}
 
 	mergeBlocks( forward = false ) {
-		const { block, previousBlock, nextBlock, onMerge } = this.props;
+		const { block, previousBlockUid, nextBlockUid, onMerge } = this.props;
 
 		// Do nothing when it's the first block.
 		if (
-			( ! forward && ! previousBlock ) ||
-			( forward && ! nextBlock )
+			( ! forward && ! previousBlockUid ) ||
+			( forward && ! nextBlockUid )
 		) {
 			return;
 		}
 
 		if ( forward ) {
-			onMerge( block, nextBlock );
+			onMerge( block.uid, nextBlockUid );
 		} else {
-			onMerge( previousBlock, block );
+			onMerge( previousBlockUid, block.uid );
 		}
 
 		// Manually trigger typing mode, since merging will remove this block and
@@ -599,21 +599,25 @@ export class BlockListBlock extends Component {
 	}
 }
 
-const mapStateToProps = ( state, { uid, rootUID } ) => ( {
-	previousBlock: getPreviousBlock( state, uid ),
-	nextBlock: getNextBlock( state, uid ),
-	block: getBlock( state, uid ),
-	isSelected: isBlockSelected( state, uid ),
-	isMultiSelected: isBlockMultiSelected( state, uid ),
-	isFirstMultiSelected: isFirstMultiSelectedBlock( state, uid ),
-	isHovered: isBlockHovered( state, uid ) && ! isMultiSelecting( state ),
-	isTyping: isTyping( state ),
-	order: getBlockIndex( state, uid, rootUID ),
-	meta: getEditedPostAttribute( state, 'meta' ),
-	mode: getBlockMode( state, uid ),
-	isSelectionEnabled: isSelectionEnabled( state ),
-	postType: getCurrentPostType( state ),
-} );
+const mapStateToProps = ( state, { uid, rootUID } ) => {
+	const previousBlock = getPreviousBlock( state, uid );
+	const nextBlock = getNextBlock( state, uid );
+	return {
+		previousBlockUid: !! previousBlock && previousBlock.uid,
+		nextBlockUid: !! nextBlock && nextBlock.uid,
+		block: getBlock( state, uid ),
+		isSelected: isBlockSelected( state, uid ),
+		isMultiSelected: isBlockMultiSelected( state, uid ),
+		isFirstMultiSelected: isFirstMultiSelectedBlock( state, uid ),
+		isHovered: isBlockHovered( state, uid ) && ! isMultiSelecting( state ),
+		isTyping: isTyping( state ),
+		order: getBlockIndex( state, uid, rootUID ),
+		meta: getEditedPostAttribute( state, 'meta' ),
+		mode: getBlockMode( state, uid ),
+		isSelectionEnabled: isSelectionEnabled( state ),
+		postType: getCurrentPostType( state ),
+	};
+};
 
 const mapDispatchToProps = ( dispatch, ownProps ) => ( {
 	onChange( uid, attributes ) {
