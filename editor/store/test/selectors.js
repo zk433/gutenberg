@@ -1273,6 +1273,25 @@ describe( 'selectors', () => {
 		} );
 	} );
 
+	describe( 'getMultiSelectedBlocks', () => {
+		it( 'should return the same reference on subsequent invocations of empty selection', () => {
+			const state = {
+				editor: {
+					present: {
+						blockOrder: {
+							'': [ 123, 23 ],
+						},
+					},
+				},
+				blockSelection: { start: null, end: null },
+			};
+
+			expect(
+				getMultiSelectedBlockUids( state )
+			).toBe( getMultiSelectedBlockUids( state ) );
+		} );
+	} );
+
 	describe( 'getMultiSelectedBlocksStartUid', () => {
 		it( 'returns null if there is no multi selection', () => {
 			const state = {
