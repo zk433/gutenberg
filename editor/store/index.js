@@ -12,6 +12,9 @@ import {
 	getCurrentPostType,
 	getEditedPostContent,
 	getEditedPostTitle,
+	getMultiSelectedBlocks,
+	getMultiSelectedBlockUids,
+	getSelectedBlock,
 	getSelectedBlockCount,
 	getCurrentPostSlug,
 } from './selectors';
@@ -31,6 +34,9 @@ registerSelectors( MODULE_KEY, {
 	getCurrentPostType,
 	getEditedPostContent,
 	getEditedPostTitle,
+	getMultiSelectedBlocks,
+	getMultiSelectedBlockUids,
+	getSelectedBlock,
 	getSelectedBlockCount,
 	getCurrentPostSlug,
 } );
