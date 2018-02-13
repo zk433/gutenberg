@@ -43,6 +43,7 @@ const {
 	getSelectedBlock,
 	getBlockRootUID,
 	getMultiSelectedBlockUids,
+	getMultiSelectedBlocks,
 	getMultiSelectedBlocksStartUid,
 	getMultiSelectedBlocksEndUid,
 	getBlockOrder,
@@ -1278,17 +1279,18 @@ describe( 'selectors', () => {
 			const state = {
 				editor: {
 					present: {
-						blockOrder: {
-							'': [ 123, 23 ],
-						},
+						blocksByUid: {},
+						blockOrder: {},
+						edits: {},
 					},
 				},
 				blockSelection: { start: null, end: null },
+				currentPost: {},
 			};
 
 			expect(
-				getMultiSelectedBlockUids( state )
-			).toBe( getMultiSelectedBlockUids( state ) );
+				getMultiSelectedBlocks( state )
+			).toBe( getMultiSelectedBlocks( state ) );
 		} );
 	} );
 
