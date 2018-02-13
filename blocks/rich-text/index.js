@@ -13,7 +13,6 @@ import {
 	find,
 	defer,
 	noop,
-	throttle,
 } from 'lodash';
 import { nodeListToReact } from 'dom-react';
 import 'element-closest';
@@ -93,16 +92,17 @@ export class RichText extends Component {
 		this.getSettings = this.getSettings.bind( this );
 		this.onSetup = this.onSetup.bind( this );
 		this.onChange = this.onChange.bind( this );
-		this.throttledOnChange = throttle( this.onChange.bind( this ), 500 );
 		this.onNewBlock = this.onNewBlock.bind( this );
 		this.onNodeChange = this.onNodeChange.bind( this );
 		this.onKeyDown = this.onKeyDown.bind( this );
 		this.onKeyUp = this.onKeyUp.bind( this );
 		this.changeFormats = this.changeFormats.bind( this );
 		this.onSelectionChange = this.onSelectionChange.bind( this );
-		this.maybePropagateUndo = this.maybePropagateUndo.bind( this );
+		this.onPropagateUndo = this.onPropagateUndo.bind( this );
 		this.onPastePreProcess = this.onPastePreProcess.bind( this );
 		this.onPaste = this.onPaste.bind( this );
+		this.onAddUndo = this.onAddUndo.bind( this );
+		this.onCreateUndoLevel = this.onCreateUndoLevel.bind( this );
 
 		this.state = {
 			formats: {},
@@ -142,16 +142,16 @@ export class RichText extends Component {
 		} );
 
 		editor.on( 'init', this.onInit );
-		editor.on( 'focusout', this.onChange );
 		editor.on( 'NewBlock', this.onNewBlock );
 		editor.on( 'nodechange', this.onNodeChange );
 		editor.on( 'keydown', this.onKeyDown );
 		editor.on( 'keyup', this.onKeyUp );
 		editor.on( 'selectionChange', this.onSelectionChange );
-		editor.on( 'BeforeExecCommand', this.maybePropagateUndo );
+		editor.on( 'BeforeExecCommand', this.onPropagateUndo );
 		editor.on( 'PastePreProcess', this.onPastePreProcess, true /* Add before core handlers */ );
 		editor.on( 'paste', this.onPaste, true /* Add before core handlers */ );
-		editor.on( 'input', this.throttledOnChange );
+		editor.on( 'input', this.onChange );
+		editor.on( 'addundo', this.onAddUndo );
 
 		patterns.apply( this, [ editor ] );
 
@@ -223,23 +223,15 @@ export class RichText extends Component {
 	/**
 	 * Handles an undo event from tinyMCE.
 	 *
-	 * When user attempts Undo when empty Undo stack, propagate undo
-	 * action to context handler. The compromise here is that: TinyMCE
-	 * handles Undo until change, at which point `editor.save` resets
-	 * history. If no history exists, let context handler have a turn.
-	 * Defer in case an immediate undo causes TinyMCE to be destroyed,
-	 * if other undo behaviors test presence of an input field.
-	 *
-	 * @param {UndoEvent} event The undo event as triggered by tinyMCE.
+	 * @param {UndoEvent} event The undo event as triggered by TinyMCE.
 	 */
-	maybePropagateUndo( event ) {
+	onPropagateUndo( event ) {
 		const { onUndo } = this.context;
-		if ( onUndo && event.command === 'Undo' && ! this.editor.undoManager.hasUndo() ) {
-			defer( onUndo );
+		const { command } = event;
 
-			// We could return false here to stop other TinyMCE event handlers
-			// from running, but we assume TinyMCE won't do anything on an
-			// empty undo stack anyways.
+		if ( onUndo && ( command === 'Undo' || command === 'Redo' ) ) {
+			defer( onUndo );
+			event.preventDefault();
 		}
 	}
 
@@ -373,12 +365,22 @@ export class RichText extends Component {
 	 * Handles any case where the content of the tinyMCE instance has changed.
 	 */
 	onChange() {
-		if ( ! this.editor.isDirty() ) {
+		this.savedContent = this.getContent();
+		this.props.onChange( this.savedContent );
+	}
+
+	onAddUndo( { lastLevel } ) {
+		if ( ! lastLevel ) {
 			return;
 		}
-		this.savedContent = this.state.empty ? [] : this.getContent();
-		this.props.onChange( this.savedContent );
-		this.editor.save();
+
+		this.onCreateUndoLevel();
+	}
+
+	onCreateUndoLevel() {
+		// Always ensure the content is up-to-date.
+		this.onChange();
+		this.context.onCreateUndoLevel();
 	}
 
 	/**
@@ -506,6 +508,8 @@ export class RichText extends Component {
 				return;
 			}
 
+			this.onCreateUndoLevel();
+
 			const forward = event.keyCode === DELETE;
 
 			if ( this.props.onMerge ) {
@@ -543,6 +547,7 @@ export class RichText extends Component {
 				}
 
 				event.preventDefault();
+				this.onCreateUndoLevel();
 
 				const childNodes = Array.from( rootNode.childNodes );
 				const index = dom.nodeIndex( selectedNode );
@@ -555,6 +560,7 @@ export class RichText extends Component {
 				this.props.onSplit( beforeElement, afterElement );
 			} else {
 				event.preventDefault();
+				this.onCreateUndoLevel();
 
 				if ( event.shiftKey || ! this.props.onSplit ) {
 					this.editor.execCommand( 'InsertLineBreak', false, event );
@@ -683,28 +689,20 @@ export class RichText extends Component {
 		this.setState( { formats, focusPosition, selectedNodeId: this.state.selectedNodeId + 1 } );
 	}
 
-	updateContent() {
-		const bookmark = this.editor.selection.getBookmark( 2, true );
-		this.savedContent = this.props.value;
-		this.setContent( this.savedContent );
-		this.editor.selection.moveToBookmark( bookmark );
-
-		// Saving the editor on updates avoid unecessary onChanges calls
-		// These calls can make the focus jump
-		this.editor.save();
-	}
-
 	setContent( content = '' ) {
 		this.editor.setContent( renderToString( content ) );
 	}
 
 	getContent() {
+		if ( this.state.empty ) {
+			return [];
+		}
+
 		return nodeListToReact( this.editor.getBody().childNodes || [], createTinyMCEElement );
 	}
 
 	componentWillUnmount() {
 		this.onChange();
-		this.throttledOnChange.cancel();
 	}
 
 	componentDidUpdate( prevProps ) {
@@ -715,7 +713,11 @@ export class RichText extends Component {
 			this.props.value !== prevProps.value &&
 			this.props.value !== this.savedContent
 		) {
-			this.updateContent();
+			const bookmark = this.editor.selection.getBookmark( 2, true );
+
+			this.savedContent = this.props.value;
+			this.setContent( this.savedContent );
+			this.editor.selection.moveToBookmark( bookmark );
 		}
 	}
 	componentWillReceiveProps( nextProps ) {
@@ -848,6 +850,7 @@ export class RichText extends Component {
 RichText.contextTypes = {
 	onUndo: noop,
 	canUserUseUnfilteredHTML: noop,
+	onCreateUndoLevel: noop,
 };
 
 RichText.defaultProps = {
