@@ -14,8 +14,13 @@ import { __ } from '@wordpress/i18n';
 import './style.scss';
 import BlockDropZone from '../block-drop-zone';
 import { appendDefaultBlock } from '../../store/actions';
+import { getBlockCount, isLastBlockDefault } from '../../store/selectors';
 
-export function DefaultBlockAppender( { onAppend, showPrompt = true } ) {
+export function DefaultBlockAppender( { isVisible, onAppend, showPrompt } ) {
+	if ( ! isVisible ) {
+		return null;
+	}
+
 	return (
 		<div className="editor-default-block-appender">
 			<BlockDropZone />
@@ -33,7 +38,17 @@ export function DefaultBlockAppender( { onAppend, showPrompt = true } ) {
 }
 
 export default connect(
-	null,
+	( state, ownProps ) => {
+		const isEmpty = ! getBlockCount( state, ownProps.rootUID );
+
+		return {
+			isVisible: (
+				isEmpty ||
+				! isLastBlockDefault( state, ownProps.rootUID )
+			),
+			showPrompt: isEmpty,
+		};
+	},
 	( dispatch, ownProps ) => ( {
 		onAppend() {
 			const { layout, rootUID } = ownProps;

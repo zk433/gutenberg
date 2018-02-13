@@ -3,7 +3,7 @@
  */
 import { connect } from 'react-redux';
 import {
-	filter,
+	reduce,
 	get,
 	map,
 } from 'lodash';
@@ -34,19 +34,22 @@ function BlockList( {
 	}
 
 	return map( layouts, ( layout ) => {
-		// When rendering grouped layouts, filter to blocks assigned to layout.
-		const layoutBlocks = isGroupedByLayout ?
-			filter( blocks, ( block ) => (
-				get( block, [ 'attributes', 'layout' ] ) === layout.name
-			) ) :
-			blocks;
+		const layoutBlockUIDs = reduce( blocks, ( result, block ) => {
+			// Filter blocks assigned to layout when rendering grouped layouts.
+			if ( ! isGroupedByLayout ||
+					get( block, [ 'attributes', 'layout' ] ) === layout.name ) {
+				result.push( block.uid );
+			}
+
+			return result;
+		}, [] );
 
 		return (
 			<BlockListLayout
 				key={ layout.name }
 				layout={ layout.name }
 				isGroupedByLayout={ isGroupedByLayout }
-				blocks={ layoutBlocks }
+				blockUIDs={ layoutBlockUIDs }
 				renderBlockMenu={ renderBlockMenu }
 				rootUID={ rootUID }
 				showContextualToolbar={ showContextualToolbar }

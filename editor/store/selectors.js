@@ -20,7 +20,12 @@ import createSelector from 'rememo';
 /**
  * WordPress dependencies
  */
-import { serialize, getBlockType, getBlockTypes } from '@wordpress/blocks';
+import {
+	serialize,
+	getBlockType,
+	getBlockTypes,
+	getDefaultBlockName,
+} from '@wordpress/blocks';
 import { __ } from '@wordpress/i18n';
 import { addQueryArgs } from '@wordpress/url';
 
@@ -1300,4 +1305,23 @@ export function isPublishingPost( state ) {
 	// Consider as publishing when current post prior to request was not
 	// considered published
 	return !! stateBeforeRequest && ! isCurrentPostPublished( stateBeforeRequest );
+}
+
+/**
+ * Returns true if the last block is of the default type, or false otherwise.
+ *
+ * @param {Object}  state   Global application state.
+ * @param {?string} rootUID Optional root UID of block list.
+ *
+ * @return {boolean} Whether last block is of the default type.
+ */
+export function isLastBlockDefault( state, rootUID ) {
+	const order = getBlockOrder( state, rootUID );
+	if ( ! order.length ) {
+		return false;
+	}
+
+	const { blocksByUid } = state.editor.present;
+	const lastBlock = blocksByUid[ order[ order.length - 1 ] ];
+	return !! lastBlock && lastBlock.name === getDefaultBlockName();
 }

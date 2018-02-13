@@ -1,35 +1,32 @@
 /**
- * External dependencies
- */
-import { connect } from 'react-redux';
-
-/**
  * WordPress dependencies
  */
 import {
-	BlockList,
+	BlockListLayout,
 	PostTitle,
 	WritingFlow,
 	EditorGlobalKeyboardShortcuts,
 	BlockSelectionClearer,
 } from '@wordpress/editor';
 import { Fragment } from '@wordpress/element';
+import { query } from '@wordpress/data';
 
 /**
  * Internal dependencies
  */
 import './style.scss';
 import BlockInspectorButton from './block-inspector-button';
-import { hasFixedToolbar } from '../../../store/selectors';
 
-function VisualEditor( props ) {
+function VisualEditor( { blockUIDs, hasFixedToolbar } ) {
 	return (
 		<BlockSelectionClearer className="edit-post-visual-editor">
 			<EditorGlobalKeyboardShortcuts />
 			<WritingFlow>
 				<PostTitle />
-				<BlockList
-					showContextualToolbar={ ! props.hasFixedToolbar }
+				<BlockListLayout
+					layout="default"
+					blockUIDs={ blockUIDs }
+					showContextualToolbar={ ! hasFixedToolbar }
 					renderBlockMenu={ ( { children, onClose } ) => (
 						<Fragment>
 							<BlockInspectorButton onClick={ onClose } />
@@ -42,13 +39,9 @@ function VisualEditor( props ) {
 	);
 }
 
-export default connect(
-	( state ) => {
-		return {
-			hasFixedToolbar: hasFixedToolbar( state ),
-		};
-	},
-	undefined,
-	undefined,
-	{ storeKey: 'edit-post' }
-)( VisualEditor );
+export default query( ( select ) => {
+	return {
+		hasFixedToolbar: select( 'core/edit-post', 'hasFixedToolbar' ),
+		blockUIDs: select( 'core/editor', 'getBlockOrder' ),
+	};
+} )( VisualEditor );

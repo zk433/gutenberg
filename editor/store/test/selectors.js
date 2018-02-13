@@ -8,7 +8,13 @@ import { filter, property, union } from 'lodash';
  * WordPress dependencies
  */
 import { __ } from '@wordpress/i18n';
-import { registerBlockType, unregisterBlockType, registerCoreBlocks, getBlockTypes } from '@wordpress/blocks';
+import {
+	registerBlockType,
+	unregisterBlockType,
+	registerCoreBlocks,
+	getBlockTypes,
+	getDefaultBlockName,
+} from '@wordpress/blocks';
 
 /**
  * Internal dependencies
@@ -75,6 +81,7 @@ const {
 	isPublishingPost,
 	getInserterItems,
 	getRecentInserterItems,
+	isLastBlockDefault,
 	POST_UPDATE_TRANSACTION_ID,
 } = selectors;
 
@@ -2472,6 +2479,83 @@ describe( 'selectors', () => {
 			} );
 
 			expect( isPublishing ).toBe( true );
+		} );
+	} );
+
+	describe( 'isLastBlockDefault', () => {
+		let defaultBlockName;
+		beforeAll( () => {
+			defaultBlockName = getDefaultBlockName();
+		} );
+
+		it( 'returns false if there are no blocks', () => {
+			const state = {
+				editor: {
+					present: {
+						edits: {},
+						blocksByUid: {},
+						blockOrder: {},
+					},
+				},
+			};
+
+			expect( isLastBlockDefault( state ) ).toBe( false );
+		} );
+
+		it( 'returns false if last block UID is invalid', () => {
+			const state = {
+				editor: {
+					present: {
+						edits: {},
+						blocksByUid: {
+							123: { name: defaultBlockName },
+						},
+						blockOrder: {
+							'': [ 123, 456 ],
+						},
+					},
+				},
+			};
+
+			expect( isLastBlockDefault( state ) ).toBe( false );
+		} );
+
+		it( 'returns false if last block is not default type', () => {
+			const state = {
+				editor: {
+					present: {
+						edits: {},
+						blocksByUid: {
+							123: { name: defaultBlockName },
+							456: { name: ! defaultBlockName },
+						},
+						blockOrder: {
+							'': [ 123, 456 ],
+						},
+					},
+				},
+			};
+
+			expect( isLastBlockDefault( state ) ).toBe( false );
+		} );
+
+		it( 'returns true if last block is default type', () => {
+			const state = {
+				editor: {
+					present: {
+						edits: {},
+						blocksByUid: {
+							123: { name: defaultBlockName },
+							456: { name: defaultBlockName },
+						},
+						blockOrder: {
+							'': [ 123, 456 ],
+						},
+					},
+				},
+			};
+
+			expect( isLastBlockDefault( state ) ).toBe( true );
 		} );
 	} );
 } );
